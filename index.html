@@ -91,6 +91,57 @@ header{background:#111827;color:#fff;position:sticky;top:0;z-index:20}
 
 .admin-top{background:#111827;color:#fff;padding:14px}
 
+/* تنبيه الطلب الجديد */
+.new-order-alert{
+display:none;
+background:#f97316;
+color:#fff;
+padding:13px 15px;
+border-radius:14px;
+margin:14px 0;
+box-shadow:0 5px 18px #f9731640;
+align-items:center;
+justify-content:space-between;
+gap:10px;
+animation:pulseAlert 1.5s infinite;
+}
+
+.new-order-alert.show{
+display:flex;
+}
+
+.new-order-alert .alert-text{
+font-weight:800;
+}
+
+.new-order-alert button{
+background:#fff;
+color:#c2410c;
+padding:8px 12px;
+border-radius:9px;
+font-weight:700;
+}
+
+@keyframes pulseAlert{
+0%,100%{transform:scale(1)}
+50%{transform:scale(1.015)}
+}
+
+.new-badge{
+display:inline-flex;
+align-items:center;
+justify-content:center;
+min-width:24px;
+height:24px;
+padding:0 7px;
+background:#ef4444;
+color:#fff;
+border-radius:999px;
+font-size:12px;
+font-weight:800;
+margin-right:5px;
+}
+
 .thumbs{display:flex;gap:7px;overflow:auto}
 .thumbs img{width:70px;height:70px;object-fit:cover;border-radius:10px}
 
@@ -382,8 +433,6 @@ TijaraPro
 </div>
 </div>
 
-<!-- نافذة الفاتورة -->
-
 <div id="invoiceModal" class="modal">
 
 <div class="panel">
@@ -416,6 +465,20 @@ TijaraPro
 
 <div class="wrap">
 
+<!-- تنبيه الطلبات الجديدة -->
+
+<div id="newOrderAlert" class="new-order-alert">
+
+<div class="alert-text" id="newOrderAlertText">
+🔔 لديك طلب جديد
+</div>
+
+<button onclick="openNewOrders()">
+عرض الطلبات
+</button>
+
+</div>
+
 <div class="tabs">
 
 <button class="tab active" onclick="showAdminTab('dashboard',this)">
@@ -432,6 +495,7 @@ TijaraPro
 
 <button class="tab" onclick="showAdminTab('ordersAdmin',this)">
 الطلبات
+<span id="newOrdersBadge" class="new-badge hidden">0</span>
 </button>
 
 <button class="tab" onclick="showAdminTab('customersAdmin',this)">
@@ -696,6 +760,10 @@ let selectedCat="all";
 let editingImages=[];
 let adminUser=null;
 
+let newOrderCount=0;
+let previousNewOrderCount=0;
+let notificationTimer=null;
+
 const money=n=>
 new Intl.NumberFormat("ar-DZ",{maximumFractionDigits:2})
 .format(Number(n||0))+" دج";
@@ -741,7 +809,7 @@ hide("cartDrawer");
 
 async function init(){
 
-const {data:c,error:catError}=await sb
+const {data:c}=await sb
 .from("categories")
 .select("*")
 .order("name");
@@ -1231,6 +1299,11 @@ showAdmin();
 
 async function logoutAdmin(){
 
+if(notificationTimer){
+clearInterval(notificationTimer);
+notificationTimer=null;
+}
+
 await sb.auth.signOut();
 
 adminUser=null;
@@ -1249,6 +1322,8 @@ document.getElementById("admin").style.display="block";
 
 await loadAdminAll();
 
+startNewOrderChecker();
+
 }
 
 async function showAdminTab(id,btn){
@@ -1265,14 +1340,19 @@ document
 
 btn.classList.add("active");
 
+if(id==="ordersAdmin"){
+
+hideNewOrderAlert();
+
+await loadAdminOrders();
+
+}
+
 if(id==="productsAdmin")
 loadAdminProducts();
 
 if(id==="categoriesAdmin")
 loadAdminCategories();
-
-if(id==="ordersAdmin")
-loadAdminOrders();
 
 if(id==="customersAdmin")
 loadAdminCustomers();
@@ -1298,6 +1378,106 @@ loadAdminSettings()
 ]);
 
 }
+
+/* =================================
+   نظام إشعار الطلبات الجديدة
+================================= */
+
+async function checkNewOrders(showAlert=true){
+
+if(!adminUser)return;
+
+const {count,error}=await sb
+.from("orders")
+.select("*",{count:"exact",head:true})
+.eq("status","new");
+
+if(error){
+console.error(error);
+return;
+}
+
+newOrderCount=count||0;
+
+const badge=document.getElementById("newOrdersBadge");
+
+if(newOrderCount>0){
+
+badge.textContent=newOrderCount;
+badge.classList.remove("hidden");
+
+document.getElementById("newOrderAlertText").textContent=
+"🔔 لديك "+newOrderCount+" طلب "+(newOrderCount===1?"جديد":"جديد");
+
+if(showAlert){
+
+if(previousNewOrderCount!==null &&
+newOrderCount>previousNewOrderCount){
+
+showNewOrderAlert();
+
+}
+
+}
+
+}else{
+
+badge.classList.add("hidden");
+hideNewOrderAlert();
+
+}
+
+previousNewOrderCount=newOrderCount;
+
+}
+
+function showNewOrderAlert(){
+
+document
+.getElementById("newOrderAlert")
+.classList.add("show");
+
+}
+
+function hideNewOrderAlert(){
+
+document
+.getElementById("newOrderAlert")
+.classList.remove("show");
+
+}
+
+async function openNewOrders(){
+
+hideNewOrderAlert();
+
+const btn=[...document.querySelectorAll(".tab")]
+.find(x=>x.textContent.includes("الطلبات"));
+
+if(btn)
+showAdminTab("ordersAdmin",btn);
+else
+loadAdminOrders();
+
+}
+
+function startNewOrderChecker(){
+
+if(notificationTimer)
+clearInterval(notificationTimer);
+
+previousNewOrderCount=newOrderCount;
+
+checkNewOrders(false);
+
+notificationTimer=setInterval(
+()=>checkNewOrders(true),
+10000
+);
+
+}
+
+/* ================================= */
 
 async function renderStats(){
 
@@ -1823,10 +2003,6 @@ loadAdminCategories();
 
 }
 
-/* ==============================
-   الطلبات
-============================== */
-
 async function loadAdminOrders(){
 
 const {data,error}=await sb
@@ -1936,10 +2112,6 @@ onclick="openInvoice(${o.id})">
 
 }
 
-/* تأكيد الطلب:
-   new -> processing
-*/
-
 async function confirmOrder(id){
 
 if(!confirm("هل تريد تأكيد هذا الطلب؟"))
@@ -1964,10 +2136,9 @@ alert("تم تأكيد الطلب بنجاح.");
 
 await loadAdminOrders();
 await renderStats();
+await checkNewOrders(false);
 
 }
-
-/* تغيير الحالة */
 
 async function changeOrderStatus(id,status){
 
@@ -2002,12 +2173,9 @@ return;
 
 await loadAdminOrders();
 await renderStats();
+await checkNewOrders(false);
 
 }
-
-/* ==============================
-   الفاتورة
-============================== */
 
 async function openInvoice(orderId){
 
@@ -2023,11 +2191,6 @@ alert(orderError.message);
 return;
 
 }
-
-/*
-نقرأ عناصر الطلب.
-نستخدم select("*") حتى لا نعتمد على أسماء أعمدة إضافية.
-*/
 
 const {data:items,error:itemError}=await sb
 .from("order_items")
@@ -2339,6 +2502,7 @@ closeModal("invoiceModal");
 
 await loadAdminOrders();
 await renderStats();
+await checkNewOrders(false);
 
 }
 
@@ -2347,10 +2511,6 @@ function printInvoice(){
 window.print();
 
 }
-
-/* ==============================
-   الزبائن
-============================== */
 
 async function loadAdminCustomers(){
 
@@ -2405,10 +2565,6 @@ ${(data||[]).map(c=>
 </table>`;
 
 }
-
-/* ==============================
-   التوصيل
-============================== */
 
 async function loadAdminDelivery(){
 
@@ -2562,10 +2718,6 @@ else
 loadAdminDelivery();
 
 }
-
-/* ==============================
-   الإعدادات
-============================== */
 
 async function loadAdminSettings(){
 
