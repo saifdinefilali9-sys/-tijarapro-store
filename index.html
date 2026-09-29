@@ -4,170 +4,527 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
 <title>TijaraPro Store</title>
+
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 *{box-sizing:border-box}
-body{margin:0;font-family:Arial,Tahoma,sans-serif;background:#f5f7fb;color:#172033}
+
+body{
+margin:0;
+font-family:Arial,Tahoma,sans-serif;
+background:#f5f7fb;
+color:#172033
+}
+
 button,input,select,textarea{font:inherit}
-button{cursor:pointer;border:0}
-.wrap{max-width:1180px;margin:auto;padding:0 14px}
 
-header{background:#111827;color:#fff;position:sticky;top:0;z-index:20}
-.head{min-height:68px;display:flex;align-items:center;justify-content:space-between;gap:10px}
-.brand{font-size:22px;font-weight:800}
-.brand small{display:block;font-size:11px;color:#cbd5e1;font-weight:400}
-.head-actions{display:flex;gap:8px}
-.iconbtn{background:#1f2937;color:#fff;border-radius:12px;padding:10px 12px}
+button{
+cursor:pointer;
+border:0
+}
 
-.hero{margin:16px 0;background:linear-gradient(135deg,#111827,#334155);color:white;border-radius:22px;padding:24px}
-.hero h1{margin:0 0 8px;font-size:28px}
-.hero p{margin:0;color:#dbe4ef}
+.wrap{
+max-width:1180px;
+margin:auto;
+padding:0 14px
+}
 
-.section-title{display:flex;justify-content:space-between;align-items:center;margin:20px 0 10px}
-.section-title h2{margin:0;font-size:20px}
-
-.search{display:flex;gap:8px;margin:12px 0}
-.search input{flex:1;padding:14px;border:1px solid #d8dee8;border-radius:14px;background:#fff;outline:0}
-
-.cats{display:flex;gap:8px;overflow:auto;padding-bottom:4px}
-.cat{white-space:nowrap;padding:10px 15px;border-radius:999px;background:#fff;border:1px solid #e1e6ee}
-.cat.active{background:#f97316;color:#fff;border-color:#f97316}
-
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-.card{background:#fff;border:1px solid #e7ebf1;border-radius:18px;overflow:hidden;box-shadow:0 3px 12px #00000008}
-.pic{height:190px;background:#eef2f7;display:flex;align-items:center;justify-content:center;overflow:hidden}
-.pic img{width:100%;height:100%;object-fit:cover}
-.placeholder{font-size:42px}
-.body{padding:12px}
-.pname{font-weight:700;min-height:40px}
-.muted{color:#64748b;font-size:13px}
-.price{font-size:20px;font-weight:800;margin-top:8px}
-.old{text-decoration:line-through;color:#94a3b8;font-size:12px;margin-right:5px}
-.stock{font-size:12px;margin-top:5px;color:#64748b}
-.add{width:100%;margin-top:10px;background:#f97316;color:#fff;padding:11px;border-radius:12px;font-weight:700}
-
-.bottom{position:sticky;bottom:0;background:#fff;border-top:1px solid #e5e7eb;display:flex;justify-content:space-around;padding:8px;z-index:15}
-.bottom button{background:none;color:#475569;padding:7px}
-.bottom b{display:block;font-size:11px}
-
-.drawer,.modal{position:fixed;inset:0;background:#0008;z-index:50;display:none;align-items:flex-end;justify-content:center}
-.modal{align-items:center}
-.panel{background:#fff;width:100%;max-width:620px;max-height:92vh;overflow:auto;border-radius:24px 24px 0 0;padding:18px}
-.modal .panel{border-radius:22px}
-.close{float:left;background:#eef2f7;border-radius:10px;padding:7px 10px}
-
-.cartrow{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid #eee}
-.cartrow img{width:64px;height:64px;object-fit:cover;border-radius:10px;background:#eee}
-.grow{flex:1}
-.qty{display:flex;align-items:center;gap:8px;margin-top:7px}
-.qty button{width:30px;height:30px;border-radius:9px;background:#eef2f7}
-
-.totalbox{background:#f8fafc;border-radius:16px;padding:14px;margin:12px 0}
-.line{display:flex;justify-content:space-between;margin:8px 0}
-
-.primary{width:100%;background:#111827;color:#fff;padding:13px;border-radius:13px;font-weight:700}
-.orange{background:#f97316}
-.danger{background:#ef4444;color:#fff}
-.green{background:#16a34a;color:#fff}
-.gray{background:#64748b;color:#fff}
-
-.field{margin:10px 0}
-.field label{display:block;font-size:13px;margin-bottom:5px;color:#475569}
-.field input,.field select,.field textarea{width:100%;padding:12px;border:1px solid #d9e0e8;border-radius:11px;outline:0;background:#fff}
-
-.admin{display:none}
-.tabs{display:flex;gap:7px;overflow:auto;margin:12px 0}
-.tab{white-space:nowrap;background:#fff;border:1px solid #e1e6ee;padding:9px 13px;border-radius:10px}
-.tab.active{background:#111827;color:#fff}
-
-.table{overflow:auto;background:#fff;border-radius:15px;border:1px solid #e5e7eb}
-.table table{width:100%;border-collapse:collapse;min-width:750px}
-.table th,.table td{padding:10px;border-bottom:1px solid #eee;text-align:right;font-size:13px}
-
-.statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
-.stat{background:#fff;border:1px solid #e5e7eb;border-radius:15px;padding:14px}
-.stat strong{font-size:22px;display:block;margin-top:5px}
-
-.admin-top{background:#111827;color:#fff;padding:14px}
-
-/* تنبيه الطلب الجديد */
-.new-order-alert{
-display:none;
-background:#f97316;
+header{
+background:#111827;
 color:#fff;
-padding:13px 15px;
-border-radius:14px;
-margin:14px 0;
-box-shadow:0 5px 18px #f9731640;
+position:sticky;
+top:0;
+z-index:20
+}
+
+.head{
+min-height:68px;
+display:flex;
 align-items:center;
 justify-content:space-between;
-gap:10px;
-animation:pulseAlert 1.5s infinite;
+gap:10px
 }
 
-.new-order-alert.show{
+.brand{
+font-size:22px;
+font-weight:800
+}
+
+.brand small{
+display:block;
+font-size:11px;
+color:#cbd5e1;
+font-weight:400
+}
+
+.head-actions{
 display:flex;
+gap:8px
 }
 
-.new-order-alert .alert-text{
-font-weight:800;
+.iconbtn{
+background:#1f2937;
+color:#fff;
+border-radius:12px;
+padding:10px 12px
 }
 
-.new-order-alert button{
+.hero{
+margin:16px 0;
+background:linear-gradient(135deg,#111827,#334155);
+color:white;
+border-radius:22px;
+padding:24px
+}
+
+.hero h1{
+margin:0 0 8px;
+font-size:28px
+}
+
+.hero p{
+margin:0;
+color:#dbe4ef
+}
+
+.section-title{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin:20px 0 10px
+}
+
+.section-title h2{
+margin:0;
+font-size:20px
+}
+
+.search{
+display:flex;
+gap:8px;
+margin:12px 0
+}
+
+.search input{
+flex:1;
+padding:14px;
+border:1px solid #d8dee8;
+border-radius:14px;
 background:#fff;
-color:#c2410c;
-padding:8px 12px;
-border-radius:9px;
-font-weight:700;
+outline:0
 }
 
-@keyframes pulseAlert{
-0%,100%{transform:scale(1)}
-50%{transform:scale(1.015)}
+.cats{
+display:flex;
+gap:8px;
+overflow:auto;
+padding-bottom:4px
 }
 
-.new-badge{
-display:inline-flex;
+.cat{
+white-space:nowrap;
+padding:10px 15px;
+border-radius:999px;
+background:#fff;
+border:1px solid #e1e6ee
+}
+
+.cat.active{
+background:#f97316;
+color:#fff;
+border-color:#f97316
+}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:14px
+}
+
+.card{
+background:#fff;
+border:1px solid #e7ebf1;
+border-radius:18px;
+overflow:hidden;
+box-shadow:0 3px 12px #00000008
+}
+
+.pic{
+height:190px;
+background:#eef2f7;
+display:flex;
 align-items:center;
 justify-content:center;
-min-width:24px;
-height:24px;
-padding:0 7px;
-background:#ef4444;
-color:#fff;
-border-radius:999px;
-font-size:12px;
-font-weight:800;
-margin-right:5px;
+overflow:hidden
 }
 
-.thumbs{display:flex;gap:7px;overflow:auto}
-.thumbs img{width:70px;height:70px;object-fit:cover;border-radius:10px}
+.pic img{
+width:100%;
+height:100%;
+object-fit:cover
+}
 
-.drop{border:2px dashed #cbd5e1;border-radius:14px;padding:16px;text-align:center;background:#f8fafc}
-.hidden{display:none!important}
+.placeholder{
+font-size:42px
+}
 
-.success{padding:24px;text-align:center}
-.success .big{font-size:55px}
+.body{
+padding:12px
+}
 
-.notice{padding:10px;border-radius:10px;background:#fff7ed;color:#9a3412;margin:10px 0;font-size:13px}
+.pname{
+font-weight:700;
+min-height:40px
+}
 
-.status-new{color:#f97316;font-weight:700}
-.status-processing{color:#2563eb;font-weight:700}
-.status-shipped{color:#7c3aed;font-weight:700}
-.status-delivered{color:#16a34a;font-weight:700}
-.status-cancelled{color:#dc2626;font-weight:700}
+.muted{
+color:#64748b;
+font-size:13px
+}
 
-.order-actions{display:flex;gap:6px;flex-wrap:wrap}
-.order-actions button{padding:7px 10px;border-radius:8px;font-size:12px}
+.price{
+font-size:20px;
+font-weight:800;
+margin-top:8px
+}
+
+.old{
+text-decoration:line-through;
+color:#94a3b8;
+font-size:12px;
+margin-right:5px
+}
+
+.stock{
+font-size:12px;
+margin-top:5px;
+color:#64748b
+}
+
+.add{
+width:100%;
+margin-top:10px;
+background:#f97316;
+color:#fff;
+padding:11px;
+border-radius:12px;
+font-weight:700
+}
+
+.bottom{
+position:sticky;
+bottom:0;
+background:#fff;
+border-top:1px solid #e5e7eb;
+display:flex;
+justify-content:space-around;
+padding:8px;
+z-index:15
+}
+
+.bottom button{
+background:none;
+color:#475569;
+padding:7px
+}
+
+.bottom b{
+display:block;
+font-size:11px
+}
+
+.drawer,.modal{
+position:fixed;
+inset:0;
+background:#0008;
+z-index:50;
+display:none;
+align-items:flex-end;
+justify-content:center
+}
+
+.modal{
+align-items:center
+}
+
+.panel{
+background:#fff;
+width:100%;
+max-width:620px;
+max-height:92vh;
+overflow:auto;
+border-radius:24px 24px 0 0;
+padding:18px
+}
+
+.modal .panel{
+border-radius:22px
+}
+
+.close{
+float:left;
+background:#eef2f7;
+border-radius:10px;
+padding:7px 10px
+}
+
+.cartrow{
+display:flex;
+gap:10px;
+padding:10px 0;
+border-bottom:1px solid #eee
+}
+
+.cartrow img{
+width:64px;
+height:64px;
+object-fit:cover;
+border-radius:10px;
+background:#eee
+}
+
+.grow{
+flex:1
+}
+
+.qty{
+display:flex;
+align-items:center;
+gap:8px;
+margin-top:7px
+}
+
+.qty button{
+width:30px;
+height:30px;
+border-radius:9px;
+background:#eef2f7
+}
+
+.totalbox{
+background:#f8fafc;
+border-radius:16px;
+padding:14px;
+margin:12px 0
+}
+
+.line{
+display:flex;
+justify-content:space-between;
+margin:8px 0
+}
+
+.primary{
+width:100%;
+background:#111827;
+color:#fff;
+padding:13px;
+border-radius:13px;
+font-weight:700
+}
+
+.orange{
+background:#f97316
+}
+
+.danger{
+background:#ef4444;
+color:#fff
+}
+
+.green{
+background:#16a34a;
+color:#fff
+}
+
+.gray{
+background:#64748b;
+color:#fff
+}
+
+.field{
+margin:10px 0
+}
+
+.field label{
+display:block;
+font-size:13px;
+margin-bottom:5px;
+color:#475569
+}
+
+.field input,
+.field select,
+.field textarea{
+width:100%;
+padding:12px;
+border:1px solid #d9e0e8;
+border-radius:11px;
+outline:0;
+background:#fff
+}
+
+.field select{
+appearance:auto
+}
+
+.admin{
+display:none
+}
+
+.tabs{
+display:flex;
+gap:7px;
+overflow:auto;
+margin:12px 0
+}
+
+.tab{
+white-space:nowrap;
+background:#fff;
+border:1px solid #e1e6ee;
+padding:9px 13px;
+border-radius:10px
+}
+
+.tab.active{
+background:#111827;
+color:#fff
+}
+
+.table{
+overflow:auto;
+background:#fff;
+border-radius:15px;
+border:1px solid #e5e7eb
+}
+
+.table table{
+width:100%;
+border-collapse:collapse;
+min-width:750px
+}
+
+.table th,
+.table td{
+padding:10px;
+border-bottom:1px solid #eee;
+text-align:right;
+font-size:13px
+}
+
+.statgrid{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:10px
+}
+
+.stat{
+background:#fff;
+border:1px solid #e5e7eb;
+border-radius:15px;
+padding:14px
+}
+
+.stat strong{
+font-size:22px;
+display:block;
+margin-top:5px
+}
+
+.admin-top{
+background:#111827;
+color:#fff;
+padding:14px
+}
+
+.thumbs{
+display:flex;
+gap:7px;
+overflow:auto
+}
+
+.thumbs img{
+width:70px;
+height:70px;
+object-fit:cover;
+border-radius:10px
+}
+
+.drop{
+border:2px dashed #cbd5e1;
+border-radius:14px;
+padding:16px;
+text-align:center;
+background:#f8fafc
+}
+
+.hidden{
+display:none!important
+}
+
+.success{
+padding:24px;
+text-align:center
+}
+
+.success .big{
+font-size:55px
+}
+
+.notice{
+padding:10px;
+border-radius:10px;
+background:#fff7ed;
+color:#9a3412;
+margin:10px 0;
+font-size:13px
+}
+
+.status-new{
+color:#f97316;
+font-weight:700
+}
+
+.status-processing{
+color:#2563eb;
+font-weight:700
+}
+
+.status-shipped{
+color:#7c3aed;
+font-weight:700
+}
+
+.status-delivered{
+color:#16a34a;
+font-weight:700
+}
+
+.status-cancelled{
+color:#dc2626;
+font-weight:700
+}
+
+.order-actions{
+display:flex;
+gap:6px;
+flex-wrap:wrap
+}
+
+.order-actions button{
+padding:7px 10px;
+border-radius:8px;
+font-size:12px
+}
 
 .invoice{
 background:#fff;
 color:#111827;
 padding:20px;
 max-width:700px;
-margin:auto;
+margin:auto
 }
 
 .invoice-head{
@@ -176,12 +533,12 @@ justify-content:space-between;
 gap:20px;
 border-bottom:2px solid #111827;
 padding-bottom:15px;
-margin-bottom:15px;
+margin-bottom:15px
 }
 
 .invoice-title{
 font-size:25px;
-font-weight:800;
+font-weight:800
 }
 
 .invoice-info{
@@ -191,62 +548,127 @@ gap:8px;
 background:#f8fafc;
 padding:12px;
 border-radius:12px;
-margin-bottom:15px;
+margin-bottom:15px
 }
 
 .invoice table{
 width:100%;
 border-collapse:collapse;
-margin-top:15px;
+margin-top:15px
 }
 
-.invoice th,.invoice td{
+.invoice th,
+.invoice td{
 border-bottom:1px solid #e5e7eb;
 padding:9px 5px;
 text-align:right;
-font-size:13px;
+font-size:13px
 }
 
 .invoice-total{
 margin-top:15px;
 background:#f8fafc;
 padding:12px;
-border-radius:12px;
+border-radius:12px
 }
 
 .print-actions{
 display:flex;
 gap:8px;
-margin-top:15px;
+margin-top:15px
 }
 
 .print-actions button{
 flex:1;
 padding:12px;
-border-radius:10px;
+border-radius:10px
+}
+
+/* =========================
+   اختيار الولاية والبلدية
+========================= */
+
+.location-box{
+background:#f8fafc;
+border:1px solid #e5e7eb;
+border-radius:15px;
+padding:12px;
+margin:12px 0
+}
+
+.location-title{
+font-weight:700;
+margin-bottom:8px
+}
+
+.location-help{
+font-size:12px;
+color:#64748b;
+margin-top:5px
+}
+
+.location-loading{
+font-size:12px;
+color:#64748b;
+margin-top:6px
+}
+
+.field select:disabled{
+background:#f1f5f9;
+color:#94a3b8;
+cursor:not-allowed
 }
 
 @media(max-width:800px){
-.grid{grid-template-columns:repeat(2,1fr)}
-.pic{height:165px}
-.statgrid{grid-template-columns:repeat(2,1fr)}
-.invoice-info{grid-template-columns:1fr}
+
+.grid{
+grid-template-columns:repeat(2,1fr)
+}
+
+.pic{
+height:165px
+}
+
+.statgrid{
+grid-template-columns:repeat(2,1fr)
+}
+
+.invoice-info{
+grid-template-columns:1fr
+}
+
 }
 
 @media(min-width:801px){
-.bottom{display:none}
+
+.bottom{
+display:none
+}
+
 }
 
 @media print{
-body *{visibility:hidden!important}
-#printArea,#printArea *{visibility:visible!important}
+
+body *{
+visibility:hidden!important
+}
+
+#printArea,
+#printArea *{
+visibility:visible!important
+}
+
 #printArea{
 position:absolute;
 left:0;
 top:0;
-width:100%;
+width:100%
 }
-.print-actions{display:none!important}
+
+.print-actions{
+display:none!important
+}
+
 }
 </style>
 </head>
@@ -254,6 +676,7 @@ width:100%;
 <body>
 
 <header>
+
 <div class="wrap head">
 
 <div class="brand" id="storeName">
@@ -262,11 +685,19 @@ TijaraPro
 </div>
 
 <div class="head-actions">
-<button class="iconbtn" onclick="openCart()">🛒 <span id="cartCount">0</span></button>
-<button class="iconbtn" onclick="openAdmin()">⚙️</button>
+
+<button class="iconbtn" onclick="openCart()">
+🛒 <span id="cartCount">0</span>
+</button>
+
+<button class="iconbtn" onclick="openAdmin()">
+⚙️
+</button>
+
 </div>
 
 </div>
+
 </header>
 
 <main id="shop">
@@ -274,175 +705,378 @@ TijaraPro
 <div class="wrap">
 
 <section class="hero">
-<h1 id="heroTitle">تسوّق بسهولة</h1>
-<p id="heroText">منتجات مختارة، طلب سريع وتوصيل عبر الجزائر.</p>
+
+<h1 id="heroTitle">
+تسوّق بسهولة
+</h1>
+
+<p id="heroText">
+منتجات مختارة، طلب سريع وتوصيل عبر الجزائر.
+</p>
+
 </section>
 
 <div class="search">
-<input id="search" placeholder="ابحث عن منتج..." oninput="renderProducts()">
+
+<input
+id="search"
+placeholder="ابحث عن منتج..."
+oninput="renderProducts()">
+
 </div>
 
 <div id="cats" class="cats"></div>
 
 <div class="section-title">
+
 <h2>المنتجات</h2>
+
 <span id="resultCount" class="muted"></span>
+
 </div>
 
 <div id="products" class="grid"></div>
 
-<div id="loading" class="notice">جاري تحميل المنتجات...</div>
+<div id="loading" class="notice">
+جاري تحميل المنتجات...
+</div>
 
 </div>
+
 </main>
 
 <nav class="bottom">
-<button onclick="scrollTopPage()">🏠<b>الرئيسية</b></button>
-<button onclick="openCart()">🛒<b>السلة</b></button>
-<button onclick="openAdmin()">⚙️<b>الإدارة</b></button>
+
+<button onclick="scrollTopPage()">
+🏠
+<b>الرئيسية</b>
+</button>
+
+<button onclick="openCart()">
+🛒
+<b>السلة</b>
+</button>
+
+<button onclick="openAdmin()">
+⚙️
+<b>الإدارة</b>
+</button>
+
 </nav>
+
+<!-- =========================
+     السلة
+========================= -->
 
 <div id="cartDrawer" class="drawer">
 
 <div class="panel">
 
-<button class="close" onclick="closeCart()">✕</button>
+<button class="close" onclick="closeCart()">
+✕
+</button>
 
 <h2>سلة المشتريات</h2>
 
 <div id="cartItems"></div>
+
 <div id="cartSummary"></div>
 
-<button class="primary orange" onclick="openCheckout()">
+<button
+class="primary orange"
+onclick="openCheckout()">
+
 إتمام الطلب
+
 </button>
 
 </div>
+
 </div>
+
+<!-- =========================
+     تفاصيل المنتج
+========================= -->
 
 <div id="productModal" class="modal">
 
 <div class="panel">
 
-<button class="close" onclick="closeModal('productModal')">✕</button>
+<button
+class="close"
+onclick="closeModal('productModal')">
+
+✕
+
+</button>
 
 <div id="productDetail"></div>
 
 </div>
+
 </div>
+
+<!-- =========================
+     إتمام الطلب
+========================= -->
 
 <div id="checkoutModal" class="modal">
 
 <div class="panel">
 
-<button class="close" onclick="closeModal('checkoutModal')">✕</button>
+<button
+class="close"
+onclick="closeModal('checkoutModal')">
+
+✕
+
+</button>
 
 <h2>إتمام الطلب</h2>
 
 <div class="field">
+
 <label>الاسم</label>
-<input id="cName">
+
+<input
+id="cName"
+autocomplete="name">
+
 </div>
 
 <div class="field">
+
 <label>الهاتف</label>
-<input id="cPhone" type="tel">
+
+<input
+id="cPhone"
+type="tel"
+inputmode="tel"
+autocomplete="tel">
+
+</div>
+
+<!-- اختيار الولاية -->
+
+<div class="location-box">
+
+<div class="location-title">
+معلومات التوصيل
 </div>
 
 <div class="field">
+
 <label>الولاية</label>
-<input id="cWilaya">
+
+<select
+id="cWilaya"
+onchange="loadCommunesForWilaya()">
+
+<option value="">
+جاري تحميل الولايات...
+</option>
+
+</select>
+
 </div>
 
 <div class="field">
+
 <label>البلدية</label>
-<input id="cCommune">
+
+<select
+id="cCommune"
+disabled>
+
+<option value="">
+اختر الولاية أولاً
+</option>
+
+</select>
+
+</div>
+
+<div id="locationLoading" class="location-loading">
+جاري تحميل قائمة الولايات والبلديات...
+</div>
+
+<div class="location-help">
+اختر ولايتك أولاً، وبعدها ستظهر البلديات التابعة لها فقط.
+</div>
+
 </div>
 
 <div class="field">
+
 <label>العنوان</label>
-<textarea id="cAddress" rows="2"></textarea>
+
+<textarea
+id="cAddress"
+rows="2"
+autocomplete="street-address">
+</textarea>
+
 </div>
 
 <div class="field">
+
 <label>ملاحظات</label>
-<textarea id="cNotes" rows="2"></textarea>
+
+<textarea
+id="cNotes"
+rows="2">
+</textarea>
+
 </div>
 
 <div class="field">
+
 <label>طريقة الدفع</label>
 
 <select id="cPayment">
-<option value="cod">الدفع عند الاستلام</option>
+
+<option value="cod">
+الدفع عند الاستلام
+</option>
+
 </select>
 
 </div>
 
 <div id="checkoutTotal" class="totalbox"></div>
 
-<button class="primary orange" onclick="createOrder()">
+<button
+class="primary orange"
+onclick="createOrder()">
+
 تأكيد الطلب
+
 </button>
 
 </div>
+
 </div>
+
+<!-- =========================
+     نجاح الطلب
+========================= -->
 
 <div id="successModal" class="modal">
 
 <div class="panel success">
 
-<div class="big">✅</div>
+<div class="big">
+✅
+</div>
 
-<h2>تم استلام طلبك</h2>
+<h2>
+تم استلام طلبك
+</h2>
 
 <p id="successText"></p>
 
-<button class="primary" onclick="closeModal('successModal')">
+<button
+class="primary"
+onclick="closeModal('successModal')">
+
 متابعة التسوق
+
 </button>
 
 </div>
+
 </div>
+
+<!-- =========================
+     دخول الإدارة
+========================= -->
 
 <div id="adminLoginModal" class="modal">
 
 <div class="panel">
 
-<button class="close" onclick="closeModal('adminLoginModal')">✕</button>
+<button
+class="close"
+onclick="closeModal('adminLoginModal')">
 
-<h2>دخول الإدارة</h2>
+✕
+
+</button>
+
+<h2>
+دخول الإدارة
+</h2>
 
 <div class="notice">
 تسجيل دخول الإدارة عبر Supabase.
 </div>
 
 <div class="field">
-<label>البريد الإلكتروني</label>
-<input id="adminEmail" type="email">
+
+<label>
+البريد الإلكتروني
+</label>
+
+<input
+id="adminEmail"
+type="email">
+
 </div>
 
 <div class="field">
-<label>كلمة المرور</label>
-<input id="adminPassword" type="password">
+
+<label>
+كلمة المرور
+</label>
+
+<input
+id="adminPassword"
+type="password">
+
 </div>
 
-<button class="primary" onclick="adminLogin()">دخول</button>
+<button
+class="primary"
+onclick="adminLogin()">
 
-<p id="loginMsg" class="muted"></p>
+دخول
+
+</button>
+
+<p
+id="loginMsg"
+class="muted">
+</p>
 
 </div>
+
 </div>
+
+<!-- =========================
+     الفاتورة
+========================= -->
 
 <div id="invoiceModal" class="modal">
 
 <div class="panel">
 
-<button class="close" onclick="closeModal('invoiceModal')">✕</button>
+<button
+class="close"
+onclick="closeModal('invoiceModal')">
+
+✕
+
+</button>
 
 <div id="invoiceContent"></div>
 
 </div>
+
 </div>
+
+<!-- =========================
+     الإدارة
+========================= -->
 
 <section id="admin" class="admin">
 
@@ -452,62 +1086,82 @@ TijaraPro
 
 <div style="display:flex;justify-content:space-between;align-items:center">
 
-<b>لوحة إدارة TijaraPro</b>
+<b>
+لوحة إدارة TijaraPro
+</b>
 
-<button class="iconbtn" onclick="logoutAdmin()">
+<button
+class="iconbtn"
+onclick="logoutAdmin()">
+
 خروج
+
 </button>
 
 </div>
 
 </div>
+
 </div>
 
 <div class="wrap">
 
-<!-- تنبيه الطلبات الجديدة -->
-
-<div id="newOrderAlert" class="new-order-alert">
-
-<div class="alert-text" id="newOrderAlertText">
-🔔 لديك طلب جديد
-</div>
-
-<button onclick="openNewOrders()">
-عرض الطلبات
-</button>
-
-</div>
-
 <div class="tabs">
 
-<button class="tab active" onclick="showAdminTab('dashboard',this)">
+<button
+class="tab active"
+onclick="showAdminTab('dashboard',this)">
+
 الرئيسية
+
 </button>
 
-<button class="tab" onclick="showAdminTab('productsAdmin',this)">
+<button
+class="tab"
+onclick="showAdminTab('productsAdmin',this)">
+
 المنتجات
+
 </button>
 
-<button class="tab" onclick="showAdminTab('categoriesAdmin',this)">
+<button
+class="tab"
+onclick="showAdminTab('categoriesAdmin',this)">
+
 التصنيفات
+
 </button>
 
-<button class="tab" onclick="showAdminTab('ordersAdmin',this)">
+<button
+class="tab"
+onclick="showAdminTab('ordersAdmin',this)">
+
 الطلبات
-<span id="newOrdersBadge" class="new-badge hidden">0</span>
+
 </button>
 
-<button class="tab" onclick="showAdminTab('customersAdmin',this)">
+<button
+class="tab"
+onclick="showAdminTab('customersAdmin',this)">
+
 الزبائن
+
 </button>
 
-<button class="tab" onclick="showAdminTab('deliveryAdmin',this)">
+<button
+class="tab"
+onclick="showAdminTab('deliveryAdmin',this)">
+
 التوصيل
+
 </button>
 
-<button class="tab" onclick="showAdminTab('settingsAdmin',this)">
+<button
+class="tab"
+onclick="showAdminTab('settingsAdmin',this)">
+
 الإعدادات
+
 </button>
 
 </div>
@@ -517,193 +1171,371 @@ TijaraPro
 <div id="stats" class="statgrid"></div>
 
 <div class="section-title">
-<h2>آخر الطلبات</h2>
+
+<h2>
+آخر الطلبات
+</h2>
+
 </div>
 
-<div id="recentOrders" class="table"></div>
+<div
+id="recentOrders"
+class="table">
+</div>
 
 </div>
 
-<div id="productsAdmin" class="adminTab hidden">
+<div
+id="productsAdmin"
+class="adminTab hidden">
 
 <div class="section-title">
 
-<h2>المنتجات</h2>
+<h2>
+المنتجات
+</h2>
 
 <button
 class="primary orange"
 style="width:auto;padding:9px 13px"
 onclick="openProductForm()">
+
 + منتج
+
 </button>
 
 </div>
 
-<div id="adminProducts" class="table"></div>
+<div
+id="adminProducts"
+class="table">
+</div>
 
 </div>
 
-<div id="categoriesAdmin" class="adminTab hidden">
+<div
+id="categoriesAdmin"
+class="adminTab hidden">
 
 <div class="section-title">
 
-<h2>التصنيفات</h2>
+<h2>
+التصنيفات
+</h2>
 
 <button
 class="primary orange"
 style="width:auto;padding:9px 13px"
 onclick="addCategory()">
+
 + تصنيف
+
 </button>
 
 </div>
 
-<div id="adminCategories" class="table"></div>
+<div
+id="adminCategories"
+class="table">
+</div>
 
 </div>
 
-<div id="ordersAdmin" class="adminTab hidden">
-
-<div class="section-title">
-<h2>الطلبات والفواتير</h2>
-</div>
-
-<div id="adminOrders" class="table"></div>
-
-</div>
-
-<div id="customersAdmin" class="adminTab hidden">
-
-<div class="section-title">
-<h2>الزبائن</h2>
-</div>
-
-<div id="adminCustomers" class="table"></div>
-
-</div>
-
-<div id="deliveryAdmin" class="adminTab hidden">
+<div
+id="ordersAdmin"
+class="adminTab hidden">
 
 <div class="section-title">
 
-<h2>مناطق وأسعار التوصيل</h2>
+<h2>
+الطلبات والفواتير
+</h2>
+
+</div>
+
+<div
+id="adminOrders"
+class="table">
+</div>
+
+</div>
+
+<div
+id="customersAdmin"
+class="adminTab hidden">
+
+<div class="section-title">
+
+<h2>
+الزبائن
+</h2>
+
+</div>
+
+<div
+id="adminCustomers"
+class="table">
+</div>
+
+</div>
+
+<div
+id="deliveryAdmin"
+class="adminTab hidden">
+
+<div class="section-title">
+
+<h2>
+مناطق وأسعار التوصيل
+</h2>
 
 <button
 class="primary orange"
 style="width:auto;padding:9px 13px"
 onclick="addDelivery()">
+
 + ولاية
+
 </button>
 
 </div>
 
-<div id="adminDelivery" class="table"></div>
+<div
+id="adminDelivery"
+class="table">
+</div>
 
 </div>
 
-<div id="settingsAdmin" class="adminTab hidden">
+<div
+id="settingsAdmin"
+class="adminTab hidden">
 
 <div class="section-title">
-<h2>إعدادات المتجر</h2>
-</div>
 
-<div class="field">
-<label>اسم المتجر</label>
-<input id="sName">
-</div>
+<h2>
+إعدادات المتجر
+</h2>
 
-<div class="field">
-<label>وصف المتجر</label>
-<textarea id="sDesc" rows="3"></textarea>
-</div>
-
-<div class="field">
-<label>رقم الهاتف</label>
-<input id="sPhone">
-</div>
-
-<div class="field">
-<label>واتساب</label>
-<input id="sWhatsapp">
-</div>
-
-<div class="field">
-<label>رابط الشعار</label>
-<input id="sLogo">
-</div>
-
-<div class="field">
-<label>معلومات التوصيل</label>
-<textarea id="sDelivery" rows="3"></textarea>
-</div>
-
-<div class="field">
-<label>سياسة الإرجاع</label>
-<textarea id="sReturn" rows="3"></textarea>
-</div>
-
-<button class="primary orange" onclick="saveSettings()">
-حفظ الإعدادات
-</button>
-
-</div>
-
-</div>
-</div>
-</section>
-
-<div id="productFormModal" class="modal">
-
-<div class="panel">
-
-<button class="close" onclick="closeModal('productFormModal')">
-✕
-</button>
-
-<h2 id="productFormTitle">إضافة منتج</h2>
-
-<input id="pId" type="hidden">
-
-<div class="field">
-<label>اسم المنتج</label>
-<input id="pName">
-</div>
-
-<div class="field">
-<label>التصنيف</label>
-<select id="pCategory"></select>
-</div>
-
-<div class="field">
-<label>الوصف</label>
-<textarea id="pDesc" rows="3"></textarea>
-</div>
-
-<div class="field">
-<label>سعر البيع</label>
-<input id="pPrice" type="number" step="0.01">
-</div>
-
-<div class="field">
-<label>السعر القديم</label>
-<input id="pOldPrice" type="number" step="0.01">
-</div>
-
-<div class="field">
-<label>الكمية</label>
-<input id="pStock" type="number" min="0">
-</div>
-
-<div class="field">
-<label>الحد الأدنى للمخزون</label>
-<input id="pMinStock" type="number" min="0" value="1">
 </div>
 
 <div class="field">
 
 <label>
-<input id="pFeatured" type="checkbox">
+اسم المتجر
+</label>
+
+<input id="sName">
+
+</div>
+
+<div class="field">
+
+<label>
+وصف المتجر
+</label>
+
+<textarea
+id="sDesc"
+rows="3">
+</textarea>
+
+</div>
+
+<div class="field">
+
+<label>
+رقم الهاتف
+</label>
+
+<input id="sPhone">
+
+</div>
+
+<div class="field">
+
+<label>
+واتساب
+</label>
+
+<input id="sWhatsapp">
+
+</div>
+
+<div class="field">
+
+<label>
+رابط الشعار
+</label>
+
+<input id="sLogo">
+
+</div>
+
+<div class="field">
+
+<label>
+معلومات التوصيل
+</label>
+
+<textarea
+id="sDelivery"
+rows="3">
+</textarea>
+
+</div>
+
+<div class="field">
+
+<label>
+سياسة الإرجاع
+</label>
+
+<textarea
+id="sReturn"
+rows="3">
+</textarea>
+
+</div>
+
+<button
+class="primary orange"
+onclick="saveSettings()">
+
+حفظ الإعدادات
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- =========================
+     نموذج المنتج
+========================= -->
+
+<div
+id="productFormModal"
+class="modal">
+
+<div class="panel">
+
+<button
+class="close"
+onclick="closeModal('productFormModal')">
+
+✕
+
+</button>
+
+<h2 id="productFormTitle">
+إضافة منتج
+</h2>
+
+<input
+id="pId"
+type="hidden">
+
+<div class="field">
+
+<label>
+اسم المنتج
+</label>
+
+<input id="pName">
+
+</div>
+
+<div class="field">
+
+<label>
+التصنيف
+</label>
+
+<select id="pCategory"></select>
+
+</div>
+
+<div class="field">
+
+<label>
+الوصف
+</label>
+
+<textarea
+id="pDesc"
+rows="3">
+</textarea>
+
+</div>
+
+<div class="field">
+
+<label>
+سعر البيع
+</label>
+
+<input
+id="pPrice"
+type="number"
+step="0.01">
+
+</div>
+
+<div class="field">
+
+<label>
+السعر القديم
+</label>
+
+<input
+id="pOldPrice"
+type="number"
+step="0.01">
+
+</div>
+
+<div class="field">
+
+<label>
+الكمية
+</label>
+
+<input
+id="pStock"
+type="number"
+min="0">
+
+</div>
+
+<div class="field">
+
+<label>
+الحد الأدنى للمخزون
+</label>
+
+<input
+id="pMinStock"
+type="number"
+min="0"
+value="1">
+
+</div>
+
+<div class="field">
+
+<label>
+
+<input
+id="pFeatured"
+type="checkbox">
+
 منتج مميز
+
 </label>
 
 </div>
@@ -711,7 +1543,9 @@ onclick="addDelivery()">
 <div class="drop">
 
 <label>
+
 صور المنتج
+<br>
 يمكن اختيار عدة صور
 
 <input
@@ -736,10 +1570,13 @@ style="margin-top:10px">
 class="primary orange"
 style="margin-top:12px"
 onclick="saveProduct()">
+
 حفظ المنتج
+
 </button>
 
 </div>
+
 </div>
 
 <script>
@@ -760,56 +1597,367 @@ let selectedCat="all";
 let editingImages=[];
 let adminUser=null;
 
-let newOrderCount=0;
-let previousNewOrderCount=0;
-let notificationTimer=null;
+/* =========================
+   بيانات الولايات والبلديات
+========================= */
+
+let dzWilayas=[];
+let dzCommunes=[];
+
+/*
+مصدر البيانات:
+69 ولاية + 1541 بلدية
+*/
+
+const LOCATIONS_BASE=[
+"https:",
+"",
+"cdn.jsdelivr.net",
+"gh",
+"el-amin-dev",
+"algeria-wilayas-communes@main",
+"data"
+];
+
+function locationsUrl(file){
+return LOCATIONS_BASE.join("/")+"/"+file;
+}
+
+function escapeLocation(value){
+
+return String(value??"")
+.replace(/&/g,"&amp;")
+.replace(/</g,"&lt;")
+.replace(/>/g,"&gt;")
+.replace(/"/g,"&quot;")
+.replace(/'/g,"&#039;");
+
+}
+
+/* تحميل الولايات والبلديات */
+
+async function loadAlgeriaLocations(){
+
+const loading=
+document.getElementById("locationLoading");
+
+try{
+
+if(loading)
+loading.textContent=
+"جاري تحميل الولايات والبلديات...";
+
+const [wRes,cRes]=await Promise.all([
+
+fetch(locationsUrl("wilayas.json")),
+
+fetch(locationsUrl("communes.json"))
+
+]);
+
+if(!wRes.ok||!cRes.ok)
+throw new Error("تعذر تحميل بيانات الولايات والبلديات");
+
+const wJson=await wRes.json();
+
+const cJson=await cRes.json();
+
+dzWilayas=
+Array.isArray(wJson)
+?
+wJson
+:
+(wJson.wilayas||[]);
+
+dzCommunes=
+Array.isArray(cJson)
+?
+cJson
+:
+(cJson.communes||[]);
+
+fillWilayas();
+
+if(loading)
+loading.textContent=
+"تم تحميل الولايات والبلديات.";
+
+}catch(error){
+
+console.error(error);
+
+const select=
+document.getElementById("cWilaya");
+
+if(select){
+
+select.innerHTML=
+`<option value="">
+تعذر تحميل الولايات — أعد تحميل الصفحة
+</option>`;
+
+}
+
+const commune=
+document.getElementById("cCommune");
+
+if(commune){
+
+commune.innerHTML=
+`<option value="">
+اختر الولاية أولاً
+</option>`;
+
+commune.disabled=true;
+
+}
+
+if(loading)
+loading.textContent=
+"تعذر تحميل البيانات. أعد تحميل الصفحة.";
+
+}
+
+}
+
+/* تعبئة قائمة الولايات */
+
+function fillWilayas(){
+
+const select=
+document.getElementById("cWilaya");
+
+if(!select)return;
+
+const sorted=
+[...dzWilayas].sort((a,b)=>
+Number(a.code??a.id??a.wilaya_code)-
+Number(b.code??b.id??b.wilaya_code)
+);
+
+select.innerHTML=
+`<option value="">
+اختر الولاية
+</option>`+
+
+sorted.map(w=>{
+
+const id=
+w.code??
+w.id??
+w.wilaya_code;
+
+const name=
+w.name_ar??
+w.nom_ar??
+w.name?.ar??
+w.name?.local??
+w.name??
+"";
+
+return `
+<option value="${escapeLocation(id)}">
+${String(id).padStart(2,"0")} - ${escapeLocation(name)}
+</option>
+`;
+
+}).join("");
+
+const commune=
+document.getElementById("cCommune");
+
+if(commune){
+
+commune.innerHTML=
+`<option value="">
+اختر الولاية أولاً
+</option>`;
+
+commune.disabled=true;
+
+}
+
+}
+
+/* تحميل بلديات الولاية المختارة */
+
+function loadCommunesForWilaya(){
+
+const wilayaSelect=
+document.getElementById("cWilaya");
+
+const communeSelect=
+document.getElementById("cCommune");
+
+if(!wilayaSelect||!communeSelect)
+return;
+
+const wilayaId=
+String(wilayaSelect.value);
+
+if(!wilayaId){
+
+communeSelect.innerHTML=
+`<option value="">
+اختر الولاية أولاً
+</option>`;
+
+communeSelect.disabled=true;
+
+return;
+
+}
+
+const communes=
+dzCommunes
+.filter(c=>
+String(
+c.wilaya_code??
+c.wilaya_id??
+c.wilayaCode
+)===wilayaId
+)
+.sort((a,b)=>
+String(
+a.name_ar??
+a.nom_ar??
+a.commune_name??
+a.name?.ar??
+a.name?.local??
+a.name??
+""
+).localeCompare(
+String(
+b.name_ar??
+b.nom_ar??
+b.commune_name??
+b.name?.ar??
+b.name?.local??
+b.name??
+""
+),
+"ar"
+)
+);
+
+communeSelect.innerHTML=
+`<option value="">
+اختر البلدية
+</option>`+
+
+communes.map(c=>{
+
+const name=
+c.name_ar??
+c.nom_ar??
+c.commune_name??
+c.name?.ar??
+c.name?.local??
+c.name??
+"";
+
+return `
+<option value="${escapeLocation(name)}">
+${escapeLocation(name)}
+</option>
+`;
+
+}).join("");
+
+communeSelect.disabled=
+communes.length===0;
+
+if(communes.length===0){
+
+communeSelect.innerHTML=
+`<option value="">
+لا توجد بلديات لهذه الولاية
+</option>`;
+
+}
+
+}
+
+/* =========================
+   أدوات عامة
+========================= */
 
 const money=n=>
-new Intl.NumberFormat("ar-DZ",{maximumFractionDigits:2})
-.format(Number(n||0))+" دج";
+new Intl.NumberFormat(
+"ar-DZ",
+{maximumFractionDigits:2}
+).format(Number(n||0))+" دج";
 
 const esc=s=>
-String(s??"").replace(/[&<>"']/g,m=>({
+String(s??"").replace(
+/[&<>"']/g,
+m=>({
 "&":"&amp;",
 "<":"&lt;",
 ">":"&gt;",
 '"':"&quot;",
 "'":"&#039;"
-}[m]));
+}[m])
+);
 
 function img(p){
-return p?.image_url ||
-((Array.isArray(p?.images)&&p.images[0])||"");
+
+return p?.image_url||
+(
+Array.isArray(p?.images)&&p.images[0]
+)||
+"";
+
 }
 
 function show(id){
+
 document.getElementById(id).style.display="flex";
+
 }
 
 function hide(id){
+
 document.getElementById(id).style.display="none";
+
 }
 
 function closeModal(id){
+
 hide(id);
+
 }
 
 function scrollTopPage(){
-window.scrollTo({top:0,behavior:"smooth"});
+
+window.scrollTo({
+top:0,
+behavior:"smooth"
+});
+
 }
 
 function openCart(){
+
 renderCart();
+
 show("cartDrawer");
+
 }
 
 function closeCart(){
+
 hide("cartDrawer");
+
 }
+
+/* =========================
+   المتجر
+========================= */
 
 async function init(){
 
-const {data:c}=await sb
+const {data:c,error:catError}=await sb
 .from("categories")
 .select("*")
 .order("name");
@@ -831,11 +1979,13 @@ document.getElementById("loading").textContent=
 console.error(error);
 
 return;
+
 }
 
 products=(p||[]).map(normalize);
 
-document.getElementById("loading").classList.add("hidden");
+document.getElementById("loading")
+.classList.add("hidden");
 
 renderCategories();
 renderProducts();
@@ -846,10 +1996,22 @@ loadSettingsPublic();
 function normalize(p){
 
 return {
+
 ...p,
-category_name:p.categories?.name||"",
-price:Number(p.price||0),
-old_price:p.old_price==null?null:Number(p.old_price)
+
+category_name:
+p.categories?.name||"",
+
+price:
+Number(p.price||0),
+
+old_price:
+p.old_price==null
+?
+null
+:
+Number(p.old_price)
+
 };
 
 }
@@ -858,10 +2020,18 @@ function renderCategories(){
 
 document.getElementById("cats").innerHTML=[
 
-`<button class="cat ${selectedCat==="all"?"active":""}" onclick="selectCat('all')">الكل</button>`,
+`<button
+class="cat ${selectedCat==="all"?"active":""}"
+onclick="selectCat('all')">
+الكل
+</button>`,
 
 ...categories.map(c=>
-`<button class="cat ${selectedCat==c.id?"active":""}" onclick="selectCat('${c.id}')">${esc(c.name)}</button>`
+`<button
+class="cat ${selectedCat==c.id?"active":""}"
+onclick="selectCat('${c.id}')">
+${esc(c.name)}
+</button>`
 )
 
 ].join("");
@@ -886,23 +2056,30 @@ document.getElementById("search")
 .toLowerCase();
 
 let arr=products.filter(p=>
-(selectedCat==="all"||
-String(p.category_id)===String(selectedCat))
+(
+selectedCat==="all"||
+String(p.category_id)===String(selectedCat)
+)
 &&
-(!q||
+(
+!q||
 `${p.name} ${p.description} ${p.category_name}`
 .toLowerCase()
-.includes(q))
+.includes(q)
+)
 );
 
-document.getElementById("resultCount").textContent=
+document.getElementById("resultCount")
+.textContent=
 arr.length+" منتج";
 
 document.getElementById("products").innerHTML=
 
 arr.map(p=>
 
-`<article class="card" onclick="openProduct(${p.id})">
+`<article
+class="card"
+onclick="openProduct(${p.id})">
 
 <div class="pic">
 
@@ -918,9 +2095,13 @@ img(p)
 
 <div class="body">
 
-<div class="muted">${esc(p.category_name)}</div>
+<div class="muted">
+${esc(p.category_name)}
+</div>
 
-<div class="pname">${esc(p.name)}</div>
+<div class="pname">
+${esc(p.name)}
+</div>
 
 <div class="price">
 
@@ -929,7 +2110,9 @@ ${money(p.price)}
 ${
 p.old_price
 ?
-`<span class="old">${money(p.old_price)}</span>`
+`<span class="old">
+${money(p.old_price)}
+</span>`
 :
 ""
 }
@@ -944,7 +2127,9 @@ ${p.stock>0?"متوفر":"غير متوفر"}
 class="add"
 onclick="event.stopPropagation();addToCart(${p.id})"
 ${p.stock<1?"disabled":""}>
+
 أضف إلى السلة
+
 </button>
 
 </div>
@@ -953,19 +2138,24 @@ ${p.stock<1?"disabled":""}>
 
 ).join("")||
 
-"<div class='notice'>لا توجد منتجات مطابقة.</div>";
+"<div class='notice'>
+لا توجد منتجات مطابقة.
+</div>";
 
 }
 
 function openProduct(id){
 
-let p=products.find(x=>x.id===id);
+let p=
+products.find(x=>x.id===id);
 
 if(!p)return;
 
 document.getElementById("productDetail").innerHTML=
 
-`<div class="pic" style="height:280px">
+`<div
+class="pic"
+style="height:280px">
 
 ${
 img(p)
@@ -977,17 +2167,28 @@ img(p)
 
 </div>
 
-<h2>${esc(p.name)}</h2>
+<h2>
+${esc(p.name)}
+</h2>
 
-<div class="muted">${esc(p.category_name)}</div>
+<div class="muted">
+${esc(p.category_name)}
+</div>
 
-<div class="price">${money(p.price)}</div>
+<div class="price">
+${money(p.price)}
+</div>
 
-<p>${esc(p.description||"لا يوجد وصف.")}</p>
+<p>
+${esc(p.description||"لا يوجد وصف.")}
+</p>
 
-<button class="primary orange"
+<button
+class="primary orange"
 onclick="addToCart(${p.id});closeModal('productModal')">
+
 أضف إلى السلة
+
 </button>`;
 
 show("productModal");
@@ -996,25 +2197,31 @@ show("productModal");
 
 function addToCart(id){
 
-let p=products.find(x=>x.id===id);
+let p=
+products.find(x=>x.id===id);
 
-if(!p||p.stock<1)return;
+if(!p||p.stock<1)
+return;
 
-let x=cart.find(i=>i.productId===id);
+let x=
+cart.find(i=>i.productId===id);
 
 if(x){
 
-if(x.quantity<p.stock)x.quantity++;
+if(x.quantity<p.stock)
+x.quantity++;
 
 }else{
 
 cart.push({
+
 productId:id,
 name:p.name,
 price:p.price,
 image:img(p),
 quantity:1,
 stock:p.stock
+
 });
 
 }
@@ -1026,7 +2233,8 @@ updateCount();
 
 function changeQty(id,d){
 
-let x=cart.find(i=>i.productId===id);
+let x=
+cart.find(i=>i.productId===id);
 
 if(!x)return;
 
@@ -1034,7 +2242,10 @@ x.quantity+=d;
 
 if(x.quantity<=0){
 
-cart=cart.filter(i=>i.productId!==id);
+cart=
+cart.filter(
+i=>i.productId!==id
+);
 
 }else if(x.quantity>x.stock){
 
@@ -1049,15 +2260,22 @@ updateCount();
 
 function updateCount(){
 
-document.getElementById("cartCount").textContent=
-cart.reduce((a,x)=>a+x.quantity,0);
+document.getElementById("cartCount")
+.textContent=
+cart.reduce(
+(a,x)=>a+x.quantity,
+0
+);
 
 }
 
 function renderCart(){
 
 let sub=
-cart.reduce((a,x)=>a+x.price*x.quantity,0);
+cart.reduce(
+(a,x)=>a+x.price*x.quantity,
+0
+);
 
 document.getElementById("cartItems").innerHTML=
 
@@ -1069,21 +2287,36 @@ cart.map(x=>
 
 `<div class="cartrow">
 
-${x.image?`<img src="${x.image}">`:""}
+${x.image?
+`<img src="${x.image}">`
+:
+""}
 
 <div class="grow">
 
-<b>${esc(x.name)}</b>
+<b>
+${esc(x.name)}
+</b>
 
-<div>${money(x.price)}</div>
+<div>
+${money(x.price)}
+</div>
 
 <div class="qty">
 
-<button onclick="changeQty(${x.productId},-1)">−</button>
+<button
+onclick="changeQty(${x.productId},-1)">
+−
+</button>
 
-<b>${x.quantity}</b>
+<b>
+${x.quantity}
+</b>
 
-<button onclick="changeQty(${x.productId},1)">+</button>
+<button
+onclick="changeQty(${x.productId},1)">
++
+</button>
 
 <button
 class="danger"
@@ -1092,7 +2325,9 @@ cart=cart.filter(i=>i.productId!==${x.productId});
 renderCart();
 updateCount();
 ">
+
 حذف
+
 </button>
 
 </div>
@@ -1105,20 +2340,37 @@ updateCount();
 
 :
 
-"<div class='notice'>السلة فارغة.</div>";
+"<div class='notice'>
+السلة فارغة.
+</div>";
 
-document.getElementById("cartSummary").innerHTML=
+document.getElementById("cartSummary")
+.innerHTML=
 
 `<div class="totalbox">
 
 <div class="line">
-<span>المجموع</span>
-<b>${money(sub)}</b>
+
+<span>
+المجموع
+</span>
+
+<b>
+${money(sub)}
+</b>
+
 </div>
 
 <div class="line">
-<span>التوصيل</span>
-<span>يحسب حسب الولاية</span>
+
+<span>
+التوصيل
+</span>
+
+<span>
+يحسب حسب الولاية
+</span>
+
 </div>
 
 </div>`;
@@ -1141,63 +2393,143 @@ show("checkoutModal");
 function renderCheckoutTotal(){
 
 let sub=
-cart.reduce((a,x)=>a+x.price*x.quantity,0);
+cart.reduce(
+(a,x)=>a+x.price*x.quantity,
+0
+);
 
-document.getElementById("checkoutTotal").innerHTML=
+document.getElementById("checkoutTotal")
+.innerHTML=
 
 `<div class="line">
-<span>المنتجات</span>
-<b>${money(sub)}</b>
+
+<span>
+المنتجات
+</span>
+
+<b>
+${money(sub)}
+</b>
+
 </div>
 
 <div class="line">
-<span>التوصيل</span>
-<span>يحسب تلقائيا</span>
+
+<span>
+التوصيل
+</span>
+
+<span>
+يحسب تلقائيا
+</span>
+
 </div>`;
 
 }
 
+/* =========================
+   إنشاء الطلب
+========================= */
+
 async function createOrder(){
 
-const name=cName.value.trim();
-const phone=cPhone.value.trim();
-const wilaya=cWilaya.value.trim();
-const commune=cCommune.value.trim();
-const address=cAddress.value.trim();
-const notes=cNotes.value.trim();
+const name=
+document.getElementById("cName")
+.value.trim();
 
-if(!name||!phone||!wilaya||!address)
-return alert("أكمل الاسم والهاتف والولاية والعنوان.");
+const phone=
+document.getElementById("cPhone")
+.value.trim();
+
+const wilaya=
+document.getElementById("cWilaya")
+.value.trim();
+
+const commune=
+document.getElementById("cCommune")
+.value.trim();
+
+const address=
+document.getElementById("cAddress")
+.value.trim();
+
+const notes=
+document.getElementById("cNotes")
+.value.trim();
+
+if(
+!name||
+!phone||
+!wilaya||
+!commune||
+!address
+){
+
+return alert(
+"أكمل الاسم والهاتف والولاية والبلدية والعنوان."
+);
+
+}
+
+if(!dzWilayas.length||!dzCommunes.length){
+
+return alert(
+"قائمة الولايات والبلديات لم تكتمل بعد. أعد تحميل الصفحة."
+);
+
+}
 
 const {data,error}=await sb.rpc(
 "create_order",
 {
+
 p_customer_name:name,
+
 p_phone:phone,
+
 p_wilaya:wilaya,
+
 p_commune:commune,
+
 p_address:address,
+
 p_notes:notes,
-p_items:cart.map(i=>({
+
+p_items:
+cart.map(i=>({
+
 productId:i.productId,
 quantity:i.quantity
+
 }))
+
 }
 );
 
 if(error){
+
 alert(error.message);
+
 return;
+
 }
 
-const r=Array.isArray(data)?data[0]:data;
+const r=
+Array.isArray(data)
+?
+data[0]
+:
+data;
 
 cart=[];
+
 updateCount();
 
 closeModal("checkoutModal");
 
-document.getElementById("successText").textContent=
+document.getElementById("successText")
+.textContent=
+
 `رقم الطلب: ${r.order_number} — المبلغ الإجمالي: ${money(r.total)}`;
 
 show("successModal");
@@ -1205,6 +2537,10 @@ show("successModal");
 init();
 
 }
+
+/* =========================
+   إعدادات عامة
+========================= */
 
 async function loadSettingsPublic(){
 
@@ -1221,13 +2557,18 @@ esc(data.store_name||"TijaraPro")+
 "<small>متجر إلكتروني</small>";
 
 heroTitle.textContent=
-data.hero_title||"تسوّق بسهولة";
+data.hero_title||
+"تسوّق بسهولة";
 
 heroText.textContent=
 data.description||
 "منتجات مختارة، طلب سريع وتوصيل عبر الجزائر.";
 
 }
+
+/* =========================
+   الإدارة
+========================= */
 
 function openAdmin(){
 
@@ -1241,8 +2582,11 @@ show("adminLoginModal");
 
 async function adminLogin(){
 
-const email=adminEmail.value.trim();
-const password=adminPassword.value;
+const email=
+adminEmail.value.trim();
+
+const password=
+adminPassword.value;
 
 loginMsg.textContent="";
 
@@ -1252,21 +2596,30 @@ loginMsg.textContent=
 "أدخل البريد الإلكتروني وكلمة المرور.";
 
 return;
+
 }
 
-const {data,error}=await sb.auth.signInWithPassword({
+const {data,error}=
+await sb.auth.signInWithPassword({
+
 email,
 password
+
 });
 
 if(error){
 
-loginMsg.textContent=error.message;
+loginMsg.textContent=
+error.message;
 
 return;
+
 }
 
-const {data:isAdmin,error:adminError}=
+const {
+data:isAdmin,
+error:adminError
+}=
 await sb.rpc("is_admin");
 
 if(adminError){
@@ -1277,6 +2630,7 @@ loginMsg.textContent=
 adminError.message;
 
 return;
+
 }
 
 if(isAdmin!==true){
@@ -1287,6 +2641,7 @@ loginMsg.textContent=
 "هذا الحساب ليس ضمن الإدارة.";
 
 return;
+
 }
 
 adminUser=data.user;
@@ -1299,30 +2654,27 @@ showAdmin();
 
 async function logoutAdmin(){
 
-if(notificationTimer){
-clearInterval(notificationTimer);
-notificationTimer=null;
-}
-
 await sb.auth.signOut();
 
 adminUser=null;
 
-document.getElementById("admin").style.display="none";
+document.getElementById("admin")
+.style.display="none";
 
-document.getElementById("shop").style.display="block";
+document.getElementById("shop")
+.style.display="block";
 
 }
 
 async function showAdmin(){
 
-document.getElementById("shop").style.display="none";
+document.getElementById("shop")
+.style.display="none";
 
-document.getElementById("admin").style.display="block";
+document.getElementById("admin")
+.style.display="block";
 
 await loadAdminAll();
-
-startNewOrderChecker();
 
 }
 
@@ -1330,29 +2682,30 @@ async function showAdminTab(id,btn){
 
 document
 .querySelectorAll(".adminTab")
-.forEach(x=>x.classList.add("hidden"));
+.forEach(x=>
+x.classList.add("hidden")
+);
 
-document.getElementById(id).classList.remove("hidden");
+document
+.getElementById(id)
+.classList.remove("hidden");
 
 document
 .querySelectorAll(".tab")
-.forEach(x=>x.classList.remove("active"));
+.forEach(x=>
+x.classList.remove("active")
+);
 
 btn.classList.add("active");
-
-if(id==="ordersAdmin"){
-
-hideNewOrderAlert();
-
-await loadAdminOrders();
-
-}
 
 if(id==="productsAdmin")
 loadAdminProducts();
 
 if(id==="categoriesAdmin")
 loadAdminCategories();
+
+if(id==="ordersAdmin")
+loadAdminOrders();
 
 if(id==="customersAdmin")
 loadAdminCustomers();
@@ -1368,124 +2721,37 @@ loadAdminSettings();
 async function loadAdminAll(){
 
 await Promise.all([
+
 renderStats(),
+
 loadAdminProducts(),
+
 loadAdminCategories(),
+
 loadAdminOrders(),
+
 loadAdminCustomers(),
+
 loadAdminDelivery(),
+
 loadAdminSettings()
+
 ]);
 
 }
 
-/* =================================
-   نظام إشعار الطلبات الجديدة
-================================= */
-
-async function checkNewOrders(showAlert=true){
-
-if(!adminUser)return;
-
-const {count,error}=await sb
-.from("orders")
-.select("*",{count:"exact",head:true})
-.eq("status","new");
-
-if(error){
-console.error(error);
-return;
-}
-
-newOrderCount=count||0;
-
-const badge=document.getElementById("newOrdersBadge");
-
-if(newOrderCount>0){
-
-badge.textContent=newOrderCount;
-badge.classList.remove("hidden");
-
-document.getElementById("newOrderAlertText").textContent=
-"🔔 لديك "+newOrderCount+" طلب "+(newOrderCount===1?"جديد":"جديد");
-
-if(showAlert){
-
-if(previousNewOrderCount!==null &&
-newOrderCount>previousNewOrderCount){
-
-showNewOrderAlert();
-
-}
-
-}
-
-}else{
-
-badge.classList.add("hidden");
-hideNewOrderAlert();
-
-}
-
-previousNewOrderCount=newOrderCount;
-
-}
-
-function showNewOrderAlert(){
-
-document
-.getElementById("newOrderAlert")
-.classList.add("show");
-
-}
-
-function hideNewOrderAlert(){
-
-document
-.getElementById("newOrderAlert")
-.classList.remove("show");
-
-}
-
-async function openNewOrders(){
-
-hideNewOrderAlert();
-
-const btn=[...document.querySelectorAll(".tab")]
-.find(x=>x.textContent.includes("الطلبات"));
-
-if(btn)
-showAdminTab("ordersAdmin",btn);
-else
-loadAdminOrders();
-
-}
-
-function startNewOrderChecker(){
-
-if(notificationTimer)
-clearInterval(notificationTimer);
-
-previousNewOrderCount=newOrderCount;
-
-checkNewOrders(false);
-
-notificationTimer=setInterval(
-()=>checkNewOrders(true),
-10000
-);
-
-}
-
-/* ================================= */
-
 async function renderStats(){
 
 const [
+
 {count:pc},
+
 {count:oc},
+
 {data:orders},
+
 {data:recent}
+
 ]=await Promise.all([
 
 sb.from("products")
@@ -1498,7 +2764,9 @@ sb.from("orders")
 .select("total,status"),
 
 sb.from("orders")
-.select("order_number,customer_name,total,status,created_at")
+.select(
+"order_number,customer_name,total,status,created_at"
+)
 .order("created_at",{ascending:false})
 .limit(10)
 
@@ -1506,29 +2774,56 @@ sb.from("orders")
 
 let revenue=
 (orders||[])
-.filter(o=>o.status!=="cancelled")
-.reduce((a,o)=>a+Number(o.total||0),0);
+.filter(
+o=>o.status!=="cancelled"
+)
+.reduce(
+(a,o)=>a+Number(o.total||0),
+0
+);
 
 stats.innerHTML=
 
 `<div class="stat">
+
 المنتجات
-<strong>${pc||0}</strong>
+
+<strong>
+${pc||0}
+</strong>
+
 </div>
 
 <div class="stat">
+
 الطلبات
-<strong>${oc||0}</strong>
+
+<strong>
+${oc||0}
+</strong>
+
 </div>
 
 <div class="stat">
+
 المبيعات
-<strong>${money(revenue)}</strong>
+
+<strong>
+${money(revenue)}
+</strong>
+
 </div>
 
 <div class="stat">
+
 طلبات جديدة
-<strong>${(orders||[]).filter(o=>o.status==="new").length}</strong>
+
+<strong>
+${(orders||[])
+.filter(o=>o.status==="new")
+.length}
+</strong>
+
 </div>`;
 
 recentOrders.innerHTML=
@@ -1539,11 +2834,17 @@ tableOrders(recent||[]);
 function statusLabel(status){
 
 const labels={
+
 new:"جديد",
+
 processing:"قيد المعالجة",
+
 shipped:"تم الشحن",
+
 delivered:"تم التسليم",
+
 cancelled:"ملغى"
+
 };
 
 return labels[status]||status;
@@ -1561,14 +2862,18 @@ function tableOrders(a){
 return `<table>
 
 <thead>
+
 <tr>
+
 <th>الطلب</th>
 <th>الزبون</th>
 <th>المبلغ</th>
 <th>الحالة</th>
 <th>التاريخ</th>
 <th>إجراء</th>
+
 </tr>
+
 </thead>
 
 <tbody>
@@ -1577,24 +2882,35 @@ ${a.map(o=>
 
 `<tr>
 
-<td>${esc(o.order_number)}</td>
+<td>
+${esc(o.order_number)}
+</td>
 
-<td>${esc(o.customer_name)}</td>
+<td>
+${esc(o.customer_name)}
+</td>
 
-<td>${money(o.total)}</td>
+<td>
+${money(o.total)}
+</td>
 
 <td class="${statusClass(o.status)}">
 ${esc(statusLabel(o.status))}
 </td>
 
-<td>${new Date(o.created_at).toLocaleDateString("ar-DZ")}</td>
+<td>
+${new Date(o.created_at)
+.toLocaleDateString("ar-DZ")}
+</td>
 
 <td>
 
 <button
 style="padding:7px 10px;border-radius:8px"
 onclick="openInvoice(${o.id})">
+
 الفاتورة
+
 </button>
 
 </td>
@@ -1609,6 +2925,10 @@ onclick="openInvoice(${o.id})">
 
 }
 
+/* =========================
+   المنتجات
+========================= */
+
 async function loadAdminProducts(){
 
 const {data,error}=await sb
@@ -1619,9 +2939,12 @@ const {data,error}=await sb
 if(error){
 
 adminProducts.innerHTML=
-`<div class=notice>${esc(error.message)}</div>`;
+`<div class=notice>
+${esc(error.message)}
+</div>`;
 
 return;
+
 }
 
 adminProducts.innerHTML=
@@ -1629,14 +2952,18 @@ adminProducts.innerHTML=
 `<table>
 
 <thead>
+
 <tr>
+
 <th>الصورة</th>
 <th>المنتج</th>
 <th>التصنيف</th>
 <th>السعر</th>
 <th>المخزون</th>
 <th>إجراء</th>
+
 </tr>
+
 </thead>
 
 <tbody>
@@ -1650,29 +2977,44 @@ ${(data||[]).map(p=>
 ${
 img(p)
 ?
-`<img src="${img(p)}"
-style="width:45px;height:45px;object-fit:cover;border-radius:8px">`
+`<img
+src="${img(p)}"
+style="
+width:45px;
+height:45px;
+object-fit:cover;
+border-radius:8px">`
 :
 "📦"
 }
 
 </td>
 
-<td>${esc(p.name)}</td>
+<td>
+${esc(p.name)}
+</td>
 
-<td>${esc(p.categories?.name||"")}</td>
+<td>
+${esc(p.categories?.name||"")}
+</td>
 
-<td>${money(p.price)}</td>
+<td>
+${money(p.price)}
+</td>
 
-<td>${p.stock}</td>
+<td>
+${p.stock}
+</td>
 
 <td>
 
-<button onclick="editProduct(${p.id})">
+<button
+onclick="editProduct(${p.id})">
 تعديل
 </button>
 
-<button onclick="deleteProduct(${p.id})">
+<button
+onclick="deleteProduct(${p.id})">
 حذف
 </button>
 
@@ -1704,7 +3046,11 @@ ${esc(c.name)}
 ).join("");
 
 productFormTitle.textContent=
-id?"تعديل منتج":"إضافة منتج";
+id
+?
+"تعديل منتج"
+:
+"إضافة منتج";
 
 if(id){
 
@@ -1717,13 +3063,27 @@ const {data}=await sb
 if(!data)return;
 
 pName.value=data.name;
-pCategory.value=data.category_id||"";
-pDesc.value=data.description||"";
-pPrice.value=data.price;
-pOldPrice.value=data.old_price??"";
-pStock.value=data.stock;
-pMinStock.value=data.min_stock||1;
-pFeatured.checked=!!data.featured;
+
+pCategory.value=
+data.category_id||"";
+
+pDesc.value=
+data.description||"";
+
+pPrice.value=
+data.price;
+
+pOldPrice.value=
+data.old_price??"";
+
+pStock.value=
+data.stock;
+
+pMinStock.value=
+data.min_stock||1;
+
+pFeatured.checked=
+!!data.featured;
 
 editingImages=
 Array.isArray(data.images)
@@ -1732,8 +3092,13 @@ data.images.slice()
 :
 [];
 
-if(!editingImages.length&&data.image_url)
-editingImages=[data.image_url];
+if(
+!editingImages.length&&
+data.image_url
+)
+editingImages=[
+data.image_url
+];
 
 renderPreview();
 
@@ -1761,17 +3126,26 @@ openProductForm(id);
 
 async function previewImages(e){
 
-const files=[...e.target.files];
+const files=
+[...e.target.files];
 
 editingImages=
 await Promise.all(
+
 files.map(file=>
 new Promise(res=>{
-const r=new FileReader();
-r.onload=()=>res(r.result);
+
+const r=
+new FileReader();
+
+r.onload=()=>
+res(r.result);
+
 r.readAsDataURL(file);
+
 })
 )
+
 );
 
 renderPreview();
@@ -1791,33 +3165,45 @@ async function saveProduct(){
 
 const payload={
 
-name:pName.value.trim(),
+name:
+pName.value.trim(),
 
-category_id:pCategory.value||null,
+category_id:
+pCategory.value||null,
 
-description:pDesc.value.trim(),
+description:
+pDesc.value.trim(),
 
-price:Number(pPrice.value||0),
+price:
+Number(pPrice.value||0),
 
-old_price:pOldPrice.value
+old_price:
+pOldPrice.value
 ?
 Number(pOldPrice.value)
 :
 null,
 
-stock:Number(pStock.value||0),
+stock:
+Number(pStock.value||0),
 
-min_stock:Number(pMinStock.value||1),
+min_stock:
+Number(pMinStock.value||1),
 
-featured:pFeatured.checked,
+featured:
+pFeatured.checked,
 
-available:Number(pStock.value||0)>0,
+available:
+Number(pStock.value||0)>0,
 
-images:editingImages,
+images:
+editingImages,
 
-image_url:editingImages[0]||null,
+image_url:
+editingImages[0]||null,
 
-updated_at:new Date().toISOString()
+updated_at:
+new Date().toISOString()
 
 };
 
@@ -1869,11 +3255,16 @@ alert(error.message);
 else{
 
 await init();
+
 loadAdminProducts();
 
 }
 
 }
+
+/* =========================
+   التصنيفات
+========================= */
 
 async function loadAdminCategories(){
 
@@ -1885,7 +3276,9 @@ const {data,error}=await sb
 if(error){
 
 adminCategories.innerHTML=
-`<div class=notice>${esc(error.message)}</div>`;
+`<div class=notice>
+${esc(error.message)}
+</div>`;
 
 return;
 
@@ -1896,10 +3289,14 @@ adminCategories.innerHTML=
 `<table>
 
 <thead>
+
 <tr>
+
 <th>التصنيف</th>
 <th>إجراء</th>
+
 </tr>
+
 </thead>
 
 <tbody>
@@ -1908,17 +3305,27 @@ ${(data||[]).map(c=>
 
 `<tr>
 
-<td>${esc(c.name)}</td>
+<td>
+${esc(c.name)}
+</td>
 
 <td>
 
 <button
-onclick="renameCategory(${c.id},'${esc(c.name).replace(/'/g,"\\'")}')">
+onclick="renameCategory(
+${c.id},
+'${esc(c.name).replace(/'/g,"\\'")}'
+)">
+
 تعديل
+
 </button>
 
-<button onclick="deleteCategory(${c.id})">
+<button
+onclick="deleteCategory(${c.id})">
+
 حذف
+
 </button>
 
 </td>
@@ -1935,15 +3342,21 @@ onclick="renameCategory(${c.id},'${esc(c.name).replace(/'/g,"\\'")}')">
 
 async function addCategory(){
 
-let n=prompt("اسم التصنيف");
+let n=
+prompt("اسم التصنيف");
 
 if(!n)return;
 
 const {error}=await sb
 .from("categories")
 .insert({
+
 name:n.trim(),
-slug:n.trim().toLowerCase().replace(/\s+/g,"-")
+
+slug:n.trim()
+.toLowerCase()
+.replace(/\s+/g,"-")
+
 });
 
 if(error)
@@ -1952,6 +3365,7 @@ alert(error.message);
 else{
 
 await init();
+
 loadAdminCategories();
 
 }
@@ -1960,13 +3374,17 @@ loadAdminCategories();
 
 async function renameCategory(id,old){
 
-let n=prompt("الاسم الجديد",old);
+let n=
+prompt("الاسم الجديد",old);
 
-if(!n||n===old)return;
+if(!n||n===old)
+return;
 
 const {error}=await sb
 .from("categories")
-.update({name:n.trim()})
+.update({
+name:n.trim()
+})
 .eq("id",id);
 
 if(error)
@@ -1975,6 +3393,7 @@ alert(error.message);
 else{
 
 await init();
+
 loadAdminCategories();
 
 }
@@ -1983,7 +3402,9 @@ loadAdminCategories();
 
 async function deleteCategory(id){
 
-if(!confirm("حذف التصنيف؟ المنتجات المرتبطة لن تحذف."))
+if(!confirm(
+"حذف التصنيف؟ المنتجات المرتبطة لن تحذف."
+))
 return;
 
 const {error}=await sb
@@ -1997,11 +3418,16 @@ alert(error.message);
 else{
 
 await init();
+
 loadAdminCategories();
 
 }
 
 }
+
+/* =========================
+   الطلبات
+========================= */
 
 async function loadAdminOrders(){
 
@@ -2013,7 +3439,9 @@ const {data,error}=await sb
 if(error){
 
 adminOrders.innerHTML=
-`<div class="notice">${esc(error.message)}</div>`;
+`<div class="notice">
+${esc(error.message)}
+</div>`;
 
 return;
 
@@ -2026,13 +3454,16 @@ adminOrders.innerHTML=
 <thead>
 
 <tr>
+
 <th>الطلب</th>
 <th>الزبون</th>
 <th>الهاتف</th>
 <th>المبلغ</th>
 <th>الحالة</th>
 <th>الولاية</th>
+<th>البلدية</th>
 <th>إجراء</th>
+
 </tr>
 
 </thead>
@@ -2043,18 +3474,30 @@ ${(data||[]).map(o=>
 
 `<tr>
 
-<td>${esc(o.order_number)}</td>
+<td>
+${esc(o.order_number)}
+</td>
 
-<td>${esc(o.customer_name)}</td>
+<td>
+${esc(o.customer_name)}
+</td>
 
-<td>${esc(o.phone)}</td>
+<td>
+${esc(o.phone)}
+</td>
 
-<td>${money(o.total)}</td>
+<td>
+${money(o.total)}
+</td>
 
 <td>
 
 <select
-onchange="changeOrderStatus(${o.id},this.value)">
+onchange="
+changeOrderStatus(
+${o.id},
+this.value
+)">
 
 ${[
 "new",
@@ -2067,7 +3510,9 @@ ${[
 `<option
 ${o.status===s?"selected":""}
 value="${s}">
+
 ${statusLabel(s)}
+
 </option>`
 ).join("")}
 
@@ -2075,7 +3520,13 @@ ${statusLabel(s)}
 
 </td>
 
-<td>${esc(o.wilaya||"")}</td>
+<td>
+${esc(o.wilaya||"")}
+</td>
+
+<td>
+${esc(o.commune||"")}
+</td>
 
 <td>
 
@@ -2087,7 +3538,9 @@ o.status==="new"
 `<button
 class="green"
 onclick="confirmOrder(${o.id})">
+
 تأكيد الطلب
+
 </button>`
 :
 ""
@@ -2095,7 +3548,9 @@ onclick="confirmOrder(${o.id})">
 
 <button
 onclick="openInvoice(${o.id})">
+
 الفاتورة
+
 </button>
 
 </div>
@@ -2112,33 +3567,50 @@ onclick="openInvoice(${o.id})">
 
 }
 
+/* تأكيد الطلب:
+   new -> processing
+*/
+
 async function confirmOrder(id){
 
-if(!confirm("هل تريد تأكيد هذا الطلب؟"))
+if(!confirm(
+"هل تريد تأكيد هذا الطلب؟"
+))
 return;
 
 const {error}=await sb
 .from("orders")
 .update({
+
 status:"processing",
-updated_at:new Date().toISOString()
+
+updated_at:
+new Date().toISOString()
+
 })
 .eq("id",id);
 
 if(error){
 
-alert("تعذر تأكيد الطلب:\n"+error.message);
+alert(
+"تعذر تأكيد الطلب:\n"+
+error.message
+);
+
 return;
 
 }
 
-alert("تم تأكيد الطلب بنجاح.");
+alert(
+"تم تأكيد الطلب بنجاح."
+);
 
 await loadAdminOrders();
 await renderStats();
-await checkNewOrders(false);
 
 }
+
+/* تغيير الحالة */
 
 async function changeOrderStatus(id,status){
 
@@ -2151,15 +3623,22 @@ const allowed=[
 ];
 
 if(!allowed.includes(status)){
+
 alert("حالة غير مسموحة.");
+
 return;
+
 }
 
 const {error}=await sb
 .from("orders")
 .update({
+
 status,
-updated_at:new Date().toISOString()
+
+updated_at:
+new Date().toISOString()
+
 })
 .eq("id",id);
 
@@ -2173,13 +3652,19 @@ return;
 
 await loadAdminOrders();
 await renderStats();
-await checkNewOrders(false);
 
 }
 
+/* =========================
+   الفاتورة
+========================= */
+
 async function openInvoice(orderId){
 
-const {data:order,error:orderError}=await sb
+const {
+data:order,
+error:orderError
+}=await sb
 .from("orders")
 .select("*")
 .eq("id",orderId)
@@ -2188,24 +3673,36 @@ const {data:order,error:orderError}=await sb
 if(orderError){
 
 alert(orderError.message);
+
 return;
 
 }
 
-const {data:items,error:itemError}=await sb
+const {
+data:items,
+error:itemError
+}=await sb
 .from("order_items")
 .select("*")
 .eq("order_id",orderId);
 
 if(itemError){
 
-alert("تعذر تحميل منتجات الفاتورة:\n"+itemError.message);
+alert(
+"تعذر تحميل منتجات الفاتورة:\n"+
+itemError.message
+);
+
 return;
 
 }
 
-let productIds=(items||[])
-.map(x=>x.product_id||x.productId)
+let productIds=
+(items||[])
+.map(x=>
+x.product_id||
+x.productId
+)
 .filter(Boolean);
 
 let productMap={};
@@ -2223,11 +3720,16 @@ productMap[p.id]=p;
 
 }
 
-let rows=(items||[]).map((item,index)=>{
+let rows=
+(items||[])
+.map((item,index)=>{
 
-const pid=item.product_id||item.productId;
+const pid=
+item.product_id||
+item.productId;
 
-const product=productMap[pid]||{};
+const product=
+productMap[pid]||{};
 
 const quantity=
 Number(
@@ -2253,13 +3755,16 @@ item.line_total||
 
 return {
 
-name:product.name||
+name:
+product.name||
 item.product_name||
 item.name||
 "منتج",
 
 quantity,
+
 unitPrice,
+
 lineTotal
 
 };
@@ -2273,15 +3778,26 @@ rows.reduce(
 );
 
 let subtotal=
-Number(order.subtotal||calculatedSubtotal);
+Number(
+order.subtotal||
+calculatedSubtotal
+);
 
 let delivery=
-Number(order.delivery_fee||0);
+Number(
+order.delivery_fee||
+0
+);
 
 let total=
-Number(order.total||subtotal+delivery);
+Number(
+order.total||
+subtotal+delivery
+);
 
-document.getElementById("invoiceContent").innerHTML=
+document.getElementById(
+"invoiceContent"
+).innerHTML=
 
 `
 
@@ -2305,12 +3821,17 @@ TijaraPro
 
 <div style="text-align:left">
 
-<b>${esc(order.order_number||"")}</b>
+<b>
+${esc(order.order_number||"")}
+</b>
 
 <br>
 
 <span class="muted">
-${new Date(order.created_at).toLocaleString("ar-DZ")}
+
+${new Date(order.created_at)
+.toLocaleString("ar-DZ")}
+
 </span>
 
 </div>
@@ -2346,17 +3867,28 @@ ${esc(order.address||"")}
 
 <div>
 <b>الدفع:</b>
-${order.payment_method==="cod"?"الدفع عند الاستلام":esc(order.payment_method||"")}
+${
+order.payment_method==="cod"
+?
+"الدفع عند الاستلام"
+:
+esc(order.payment_method||"")
+}
 </div>
 
 </div>
 
 <div style="margin:10px 0">
 
-<b>حالة الطلب:</b>
+<b>
+حالة الطلب:
+</b>
 
-<span class="${statusClass(order.status)}">
+<span
+class="${statusClass(order.status)}">
+
 ${esc(statusLabel(order.status))}
+
 </span>
 
 </div>
@@ -2366,11 +3898,13 @@ ${esc(statusLabel(order.status))}
 <thead>
 
 <tr>
+
 <th>#</th>
 <th>المنتج</th>
 <th>الكمية</th>
 <th>السعر</th>
 <th>المجموع</th>
+
 </tr>
 
 </thead>
@@ -2397,12 +3931,21 @@ rows.map((x,i)=>
 </tr>`
 
 ).join("")
+
 :
+
 `<tr>
-<td colspan="5" style="text-align:center">
+
+<td
+colspan="5"
+style="text-align:center">
+
 لا توجد تفاصيل للمنتجات.
+
 </td>
+
 </tr>`
+
 }
 
 </tbody>
@@ -2412,18 +3955,41 @@ rows.map((x,i)=>
 <div class="invoice-total">
 
 <div class="line">
-<span>مجموع المنتجات</span>
-<b>${money(subtotal)}</b>
+
+<span>
+مجموع المنتجات
+</span>
+
+<b>
+${money(subtotal)}
+</b>
+
 </div>
 
 <div class="line">
-<span>التوصيل</span>
-<b>${money(delivery)}</b>
+
+<span>
+التوصيل
+</span>
+
+<b>
+${money(delivery)}
+</b>
+
 </div>
 
-<div class="line" style="font-size:19px">
-<span><b>الإجمالي</b></span>
-<b>${money(total)}</b>
+<div
+class="line"
+style="font-size:19px">
+
+<span>
+<b>الإجمالي</b>
+</span>
+
+<b>
+${money(total)}
+</b>
+
 </div>
 
 </div>
@@ -2432,8 +3998,11 @@ ${
 order.notes
 ?
 `<div class="notice">
+
 <b>ملاحظات:</b>
+
 ${esc(order.notes)}
+
 </div>`
 :
 ""
@@ -2446,7 +4015,9 @@ ${esc(order.notes)}
 <button
 class="green"
 onclick="printInvoice()">
+
 طباعة الفاتورة
+
 </button>
 
 ${
@@ -2454,8 +4025,13 @@ order.status==="new"
 ?
 `<button
 class="orange"
-onclick="confirmOrderFromInvoice(${order.id})">
+onclick="
+confirmOrderFromInvoice(
+${order.id}
+)">
+
 تأكيد الطلب
+
 </button>`
 :
 ""
@@ -2463,8 +4039,12 @@ onclick="confirmOrderFromInvoice(${order.id})">
 
 <button
 class="gray"
-onclick="closeModal('invoiceModal')">
+onclick="
+closeModal('invoiceModal')
+">
+
 إغلاق
+
 </button>
 
 </div>
@@ -2478,31 +4058,39 @@ show("invoiceModal");
 
 async function confirmOrderFromInvoice(id){
 
-if(!confirm("هل تريد تأكيد هذا الطلب؟"))
+if(!confirm(
+"هل تريد تأكيد هذا الطلب؟"
+))
 return;
 
 const {error}=await sb
 .from("orders")
 .update({
+
 status:"processing",
-updated_at:new Date().toISOString()
+
+updated_at:
+new Date().toISOString()
+
 })
 .eq("id",id);
 
 if(error){
 
 alert(error.message);
+
 return;
 
 }
 
-alert("تم تأكيد الطلب.");
+alert(
+"تم تأكيد الطلب."
+);
 
 closeModal("invoiceModal");
 
 await loadAdminOrders();
 await renderStats();
-await checkNewOrders(false);
 
 }
 
@@ -2511,6 +4099,10 @@ function printInvoice(){
 window.print();
 
 }
+
+/* =========================
+   الزبائن
+========================= */
 
 async function loadAdminCustomers(){
 
@@ -2522,7 +4114,9 @@ const {data,error}=await sb
 if(error){
 
 adminCustomers.innerHTML=
-`<div class=notice>${esc(error.message)}</div>`;
+`<div class=notice>
+${esc(error.message)}
+</div>`;
 
 return;
 
@@ -2535,11 +4129,13 @@ adminCustomers.innerHTML=
 <thead>
 
 <tr>
+
 <th>الاسم</th>
 <th>الهاتف</th>
 <th>الولاية</th>
 <th>الطلبات</th>
 <th>المشتريات</th>
+
 </tr>
 
 </thead>
@@ -2550,11 +4146,25 @@ ${(data||[]).map(c=>
 
 `<tr>
 
-<td>${esc(c.name)}</td>
-<td>${esc(c.phone)}</td>
-<td>${esc(c.wilaya||"")}</td>
-<td>${c.order_count}</td>
-<td>${money(c.total_purchases)}</td>
+<td>
+${esc(c.name)}
+</td>
+
+<td>
+${esc(c.phone)}
+</td>
+
+<td>
+${esc(c.wilaya||"")}
+</td>
+
+<td>
+${c.order_count}
+</td>
+
+<td>
+${money(c.total_purchases)}
+</td>
 
 </tr>`
 
@@ -2566,6 +4176,10 @@ ${(data||[]).map(c=>
 
 }
 
+/* =========================
+   التوصيل
+========================= */
+
 async function loadAdminDelivery(){
 
 const {data,error}=await sb
@@ -2576,7 +4190,9 @@ const {data,error}=await sb
 if(error){
 
 adminDelivery.innerHTML=
-`<div class=notice>${esc(error.message)}</div>`;
+`<div class=notice>
+${esc(error.message)}
+</div>`;
 
 return;
 
@@ -2589,11 +4205,13 @@ adminDelivery.innerHTML=
 <thead>
 
 <tr>
+
 <th>الولاية</th>
 <th>السعر</th>
 <th>المدة</th>
 <th>الحالة</th>
 <th></th>
+
 </tr>
 
 </thead>
@@ -2604,22 +4222,36 @@ ${(data||[]).map(d=>
 
 `<tr>
 
-<td>${esc(d.wilaya)}</td>
+<td>
+${esc(d.wilaya)}
+</td>
 
-<td>${money(d.fee)}</td>
+<td>
+${money(d.fee)}
+</td>
 
-<td>${esc(d.duration||"")}</td>
+<td>
+${esc(d.duration||"")}
+</td>
 
-<td>${d.active?"مفعلة":"متوقفة"}</td>
+<td>
+${d.active?"مفعلة":"متوقفة"}
+</td>
 
 <td>
 
-<button onclick="editDelivery(${d.id})">
+<button
+onclick="editDelivery(${d.id})">
+
 تعديل
+
 </button>
 
-<button onclick="deleteDelivery(${d.id})">
+<button
+onclick="deleteDelivery(${d.id})">
+
 حذف
+
 </button>
 
 </td>
@@ -2636,24 +4268,37 @@ ${(data||[]).map(d=>
 
 async function addDelivery(){
 
-let w=prompt("الولاية");
+let w=
+prompt("الولاية");
 
 if(!w)return;
 
-let fee=prompt("سعر التوصيل بالدج","800");
+let fee=
+prompt(
+"سعر التوصيل بالدج",
+"800"
+);
 
 if(fee===null)return;
 
 let duration=
-prompt("المدة","24-72 ساعة")||"";
+prompt(
+"المدة",
+"24-72 ساعة"
+)||"";
 
 const {error}=await sb
 .from("delivery_zones")
 .insert({
+
 wilaya:w.trim(),
+
 fee:Number(fee),
+
 duration,
+
 active:true
+
 });
 
 if(error)
@@ -2674,22 +4319,35 @@ const {data}=await sb
 
 if(!data)return;
 
-let fee=prompt("السعر",data.fee);
+let fee=
+prompt(
+"السعر",
+data.fee
+);
 
 if(fee===null)return;
 
 let duration=
-prompt("المدة",data.duration||"")??data.duration;
+prompt(
+"المدة",
+data.duration||""
+)??data.duration;
 
 let active=
-confirm("مفعلة؟ اضغط موافق للتفعيل وإلغاء للإيقاف");
+confirm(
+"مفعلة؟ اضغط موافق للتفعيل وإلغاء للإيقاف"
+);
 
 const {error}=await sb
 .from("delivery_zones")
 .update({
+
 fee:Number(fee),
+
 duration,
+
 active
+
 })
 .eq("id",id);
 
@@ -2703,7 +4361,9 @@ loadAdminDelivery();
 
 async function deleteDelivery(id){
 
-if(!confirm("حذف منطقة التوصيل؟"))
+if(!confirm(
+"حذف منطقة التوصيل؟"
+))
 return;
 
 const {error}=await sb
@@ -2719,6 +4379,10 @@ loadAdminDelivery();
 
 }
 
+/* =========================
+   الإعدادات
+========================= */
+
 async function loadAdminSettings(){
 
 const {data}=await sb
@@ -2729,13 +4393,26 @@ const {data}=await sb
 
 if(!data)return;
 
-sName.value=data.store_name||"";
-sDesc.value=data.description||"";
-sPhone.value=data.phone||"";
-sWhatsapp.value=data.whatsapp||"";
-sLogo.value=data.logo_url||"";
-sDelivery.value=data.delivery_info||"";
-sReturn.value=data.return_policy||"";
+sName.value=
+data.store_name||"";
+
+sDesc.value=
+data.description||"";
+
+sPhone.value=
+data.phone||"";
+
+sWhatsapp.value=
+data.whatsapp||"";
+
+sLogo.value=
+data.logo_url||"";
+
+sDelivery.value=
+data.delivery_info||"";
+
+sReturn.value=
+data.return_policy||"";
 
 }
 
@@ -2745,21 +4422,29 @@ const payload={
 
 id:1,
 
-store_name:sName.value.trim(),
+store_name:
+sName.value.trim(),
 
-description:sDesc.value.trim(),
+description:
+sDesc.value.trim(),
 
-phone:sPhone.value.trim(),
+phone:
+sPhone.value.trim(),
 
-whatsapp:sWhatsapp.value.trim(),
+whatsapp:
+sWhatsapp.value.trim(),
 
-logo_url:sLogo.value.trim(),
+logo_url:
+sLogo.value.trim(),
 
-delivery_info:sDelivery.value.trim(),
+delivery_info:
+sDelivery.value.trim(),
 
-return_policy:sReturn.value.trim(),
+return_policy:
+sReturn.value.trim(),
 
-updated_at:new Date().toISOString()
+updated_at:
+new Date().toISOString()
 
 };
 
@@ -2768,11 +4453,14 @@ const {error}=await sb
 .upsert(payload);
 
 if(error)
+
 alert(error.message);
 
 else{
 
-alert("تم حفظ الإعدادات");
+alert(
+"تم حفظ الإعدادات"
+);
 
 loadSettingsPublic();
 
@@ -2780,7 +4468,18 @@ loadSettingsPublic();
 
 }
 
+/* =========================
+   تشغيل المتجر
+========================= */
+
 init();
+
+/*
+نحمّل الولايات والبلديات
+بعد تشغيل الصفحة.
+*/
+
+loadAlgeriaLocations();
 
 </script>
 
