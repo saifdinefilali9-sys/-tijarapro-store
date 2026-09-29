@@ -69,6 +69,8 @@ header{background:#111827;color:#fff;position:sticky;top:0;z-index:20}
 .primary{width:100%;background:#111827;color:#fff;padding:13px;border-radius:13px;font-weight:700}
 .orange{background:#f97316}
 .danger{background:#ef4444;color:#fff}
+.green{background:#16a34a;color:#fff}
+.gray{background:#64748b;color:#fff}
 
 .field{margin:10px 0}
 .field label{display:block;font-size:13px;margin-bottom:5px;color:#475569}
@@ -80,7 +82,7 @@ header{background:#111827;color:#fff;position:sticky;top:0;z-index:20}
 .tab.active{background:#111827;color:#fff}
 
 .table{overflow:auto;background:#fff;border-radius:15px;border:1px solid #e5e7eb}
-.table table{width:100%;border-collapse:collapse;min-width:650px}
+.table table{width:100%;border-collapse:collapse;min-width:750px}
 .table th,.table td{padding:10px;border-bottom:1px solid #eee;text-align:right;font-size:13px}
 
 .statgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
@@ -100,14 +102,100 @@ header{background:#111827;color:#fff;position:sticky;top:0;z-index:20}
 
 .notice{padding:10px;border-radius:10px;background:#fff7ed;color:#9a3412;margin:10px 0;font-size:13px}
 
+.status-new{color:#f97316;font-weight:700}
+.status-processing{color:#2563eb;font-weight:700}
+.status-shipped{color:#7c3aed;font-weight:700}
+.status-delivered{color:#16a34a;font-weight:700}
+.status-cancelled{color:#dc2626;font-weight:700}
+
+.order-actions{display:flex;gap:6px;flex-wrap:wrap}
+.order-actions button{padding:7px 10px;border-radius:8px;font-size:12px}
+
+.invoice{
+background:#fff;
+color:#111827;
+padding:20px;
+max-width:700px;
+margin:auto;
+}
+
+.invoice-head{
+display:flex;
+justify-content:space-between;
+gap:20px;
+border-bottom:2px solid #111827;
+padding-bottom:15px;
+margin-bottom:15px;
+}
+
+.invoice-title{
+font-size:25px;
+font-weight:800;
+}
+
+.invoice-info{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:8px;
+background:#f8fafc;
+padding:12px;
+border-radius:12px;
+margin-bottom:15px;
+}
+
+.invoice table{
+width:100%;
+border-collapse:collapse;
+margin-top:15px;
+}
+
+.invoice th,.invoice td{
+border-bottom:1px solid #e5e7eb;
+padding:9px 5px;
+text-align:right;
+font-size:13px;
+}
+
+.invoice-total{
+margin-top:15px;
+background:#f8fafc;
+padding:12px;
+border-radius:12px;
+}
+
+.print-actions{
+display:flex;
+gap:8px;
+margin-top:15px;
+}
+
+.print-actions button{
+flex:1;
+padding:12px;
+border-radius:10px;
+}
+
 @media(max-width:800px){
 .grid{grid-template-columns:repeat(2,1fr)}
 .pic{height:165px}
 .statgrid{grid-template-columns:repeat(2,1fr)}
+.invoice-info{grid-template-columns:1fr}
 }
 
 @media(min-width:801px){
 .bottom{display:none}
+}
+
+@media print{
+body *{visibility:hidden!important}
+#printArea,#printArea *{visibility:visible!important}
+#printArea{
+position:absolute;
+left:0;
+top:0;
+width:100%;
+}
+.print-actions{display:none!important}
 }
 </style>
 </head>
@@ -116,6 +204,7 @@ header{background:#111827;color:#fff;position:sticky;top:0;z-index:20}
 
 <header>
 <div class="wrap head">
+
 <div class="brand" id="storeName">
 TijaraPro
 <small>متجر إلكتروني</small>
@@ -125,10 +214,12 @@ TijaraPro
 <button class="iconbtn" onclick="openCart()">🛒 <span id="cartCount">0</span></button>
 <button class="iconbtn" onclick="openAdmin()">⚙️</button>
 </div>
+
 </div>
 </header>
 
 <main id="shop">
+
 <div class="wrap">
 
 <section class="hero">
@@ -161,25 +252,40 @@ TijaraPro
 </nav>
 
 <div id="cartDrawer" class="drawer">
+
 <div class="panel">
+
 <button class="close" onclick="closeCart()">✕</button>
+
 <h2>سلة المشتريات</h2>
+
 <div id="cartItems"></div>
 <div id="cartSummary"></div>
-<button class="primary orange" onclick="openCheckout()">إتمام الطلب</button>
+
+<button class="primary orange" onclick="openCheckout()">
+إتمام الطلب
+</button>
+
 </div>
 </div>
 
 <div id="productModal" class="modal">
+
 <div class="panel">
+
 <button class="close" onclick="closeModal('productModal')">✕</button>
+
 <div id="productDetail"></div>
+
 </div>
 </div>
 
 <div id="checkoutModal" class="modal">
+
 <div class="panel">
+
 <button class="close" onclick="closeModal('checkoutModal')">✕</button>
+
 <h2>إتمام الطلب</h2>
 
 <div class="field">
@@ -214,27 +320,41 @@ TijaraPro
 
 <div class="field">
 <label>طريقة الدفع</label>
+
 <select id="cPayment">
 <option value="cod">الدفع عند الاستلام</option>
 </select>
+
 </div>
 
 <div id="checkoutTotal" class="totalbox"></div>
 
-<button class="primary orange" onclick="createOrder()">تأكيد الطلب</button>
+<button class="primary orange" onclick="createOrder()">
+تأكيد الطلب
+</button>
+
 </div>
 </div>
 
 <div id="successModal" class="modal">
+
 <div class="panel success">
+
 <div class="big">✅</div>
+
 <h2>تم استلام طلبك</h2>
+
 <p id="successText"></p>
-<button class="primary" onclick="closeModal('successModal')">متابعة التسوق</button>
+
+<button class="primary" onclick="closeModal('successModal')">
+متابعة التسوق
+</button>
+
 </div>
 </div>
 
 <div id="adminLoginModal" class="modal">
+
 <div class="panel">
 
 <button class="close" onclick="closeModal('adminLoginModal')">✕</button>
@@ -262,14 +382,35 @@ TijaraPro
 </div>
 </div>
 
+<!-- نافذة الفاتورة -->
+
+<div id="invoiceModal" class="modal">
+
+<div class="panel">
+
+<button class="close" onclick="closeModal('invoiceModal')">✕</button>
+
+<div id="invoiceContent"></div>
+
+</div>
+</div>
+
 <section id="admin" class="admin">
 
 <div class="admin-top">
+
 <div class="wrap">
+
 <div style="display:flex;justify-content:space-between;align-items:center">
+
 <b>لوحة إدارة TijaraPro</b>
-<button class="iconbtn" onclick="logoutAdmin()">خروج</button>
+
+<button class="iconbtn" onclick="logoutAdmin()">
+خروج
+</button>
+
 </div>
+
 </div>
 </div>
 
@@ -322,10 +463,16 @@ TijaraPro
 <div id="productsAdmin" class="adminTab hidden">
 
 <div class="section-title">
+
 <h2>المنتجات</h2>
-<button class="primary orange" style="width:auto;padding:9px 13px" onclick="openProductForm()">
+
+<button
+class="primary orange"
+style="width:auto;padding:9px 13px"
+onclick="openProductForm()">
 + منتج
 </button>
+
 </div>
 
 <div id="adminProducts" class="table"></div>
@@ -335,10 +482,16 @@ TijaraPro
 <div id="categoriesAdmin" class="adminTab hidden">
 
 <div class="section-title">
+
 <h2>التصنيفات</h2>
-<button class="primary orange" style="width:auto;padding:9px 13px" onclick="addCategory()">
+
+<button
+class="primary orange"
+style="width:auto;padding:9px 13px"
+onclick="addCategory()">
 + تصنيف
 </button>
+
 </div>
 
 <div id="adminCategories" class="table"></div>
@@ -348,7 +501,7 @@ TijaraPro
 <div id="ordersAdmin" class="adminTab hidden">
 
 <div class="section-title">
-<h2>الطلبات</h2>
+<h2>الطلبات والفواتير</h2>
 </div>
 
 <div id="adminOrders" class="table"></div>
@@ -368,9 +521,13 @@ TijaraPro
 <div id="deliveryAdmin" class="adminTab hidden">
 
 <div class="section-title">
+
 <h2>مناطق وأسعار التوصيل</h2>
 
-<button class="primary orange" style="width:auto;padding:9px 13px" onclick="addDelivery()">
+<button
+class="primary orange"
+style="width:auto;padding:9px 13px"
+onclick="addDelivery()">
 + ولاية
 </button>
 
@@ -435,7 +592,9 @@ TijaraPro
 
 <div class="panel">
 
-<button class="close" onclick="closeModal('productFormModal')">✕</button>
+<button class="close" onclick="closeModal('productFormModal')">
+✕
+</button>
 
 <h2 id="productFormTitle">إضافة منتج</h2>
 
@@ -477,10 +636,12 @@ TijaraPro
 </div>
 
 <div class="field">
+
 <label>
 <input id="pFeatured" type="checkbox">
 منتج مميز
 </label>
+
 </div>
 
 <div class="drop">
@@ -489,19 +650,28 @@ TijaraPro
 صور المنتج
 يمكن اختيار عدة صور
 
-<input id="pImages"
+<input
+id="pImages"
 class="hidden"
 type="file"
 accept="image/*"
 multiple
 onchange="previewImages(event)">
+
 </label>
 
-<div id="imagePreview" class="thumbs" style="margin-top:10px"></div>
+<div
+id="imagePreview"
+class="thumbs"
+style="margin-top:10px">
+</div>
 
 </div>
 
-<button class="primary orange" style="margin-top:12px" onclick="saveProduct()">
+<button
+class="primary orange"
+style="margin-top:12px"
+onclick="saveProduct()">
 حفظ المنتج
 </button>
 
@@ -571,7 +741,7 @@ hide("cartDrawer");
 
 async function init(){
 
-const {data:c}=await sb
+const {data:c,error:catError}=await sb
 .from("categories")
 .select("*")
 .order("name");
@@ -591,6 +761,7 @@ document.getElementById("loading").textContent=
 "تعذر تحميل المنتجات. تحقق من إعدادات Supabase ثم أعد المحاولة.";
 
 console.error(error);
+
 return;
 }
 
@@ -601,6 +772,7 @@ document.getElementById("loading").classList.add("hidden");
 renderCategories();
 renderProducts();
 loadSettingsPublic();
+
 }
 
 function normalize(p){
@@ -617,6 +789,7 @@ old_price:p.old_price==null?null:Number(p.old_price)
 function renderCategories(){
 
 document.getElementById("cats").innerHTML=[
+
 `<button class="cat ${selectedCat==="all"?"active":""}" onclick="selectCat('all')">الكل</button>`,
 
 ...categories.map(c=>
@@ -658,6 +831,7 @@ document.getElementById("resultCount").textContent=
 arr.length+" منتج";
 
 document.getElementById("products").innerHTML=
+
 arr.map(p=>
 
 `<article class="card" onclick="openProduct(${p.id})">
@@ -1024,12 +1198,6 @@ loginMsg.textContent=error.message;
 return;
 }
 
-/*
-نستخدم دالة is_admin التي تتحقق من
-user_id = auth.uid()
-بدلا من البحث عن email داخل admin_users.
-*/
-
 const {data:isAdmin,error:adminError}=
 await sb.rpc("is_admin");
 
@@ -1188,6 +1356,26 @@ tableOrders(recent||[]);
 
 }
 
+function statusLabel(status){
+
+const labels={
+new:"جديد",
+processing:"قيد المعالجة",
+shipped:"تم الشحن",
+delivered:"تم التسليم",
+cancelled:"ملغى"
+};
+
+return labels[status]||status;
+
+}
+
+function statusClass(status){
+
+return "status-"+status;
+
+}
+
 function tableOrders(a){
 
 return `<table>
@@ -1199,6 +1387,7 @@ return `<table>
 <th>المبلغ</th>
 <th>الحالة</th>
 <th>التاريخ</th>
+<th>إجراء</th>
 </tr>
 </thead>
 
@@ -1214,9 +1403,21 @@ ${a.map(o=>
 
 <td>${money(o.total)}</td>
 
-<td>${esc(o.status)}</td>
+<td class="${statusClass(o.status)}">
+${esc(statusLabel(o.status))}
+</td>
 
 <td>${new Date(o.created_at).toLocaleDateString("ar-DZ")}</td>
+
+<td>
+
+<button
+style="padding:7px 10px;border-radius:8px"
+onclick="openInvoice(${o.id})">
+الفاتورة
+</button>
+
+</td>
 
 </tr>`
 
@@ -1265,6 +1466,7 @@ ${(data||[]).map(p=>
 `<tr>
 
 <td>
+
 ${
 img(p)
 ?
@@ -1273,6 +1475,7 @@ style="width:45px;height:45px;object-fit:cover;border-radius:8px">`
 :
 "📦"
 }
+
 </td>
 
 <td>${esc(p.name)}</td>
@@ -1620,6 +1823,10 @@ loadAdminCategories();
 
 }
 
+/* ==============================
+   الطلبات
+============================== */
+
 async function loadAdminOrders(){
 
 const {data,error}=await sb
@@ -1630,7 +1837,7 @@ const {data,error}=await sb
 if(error){
 
 adminOrders.innerHTML=
-`<div class=notice>${esc(error.message)}</div>`;
+`<div class="notice">${esc(error.message)}</div>`;
 
 return;
 
@@ -1648,7 +1855,8 @@ adminOrders.innerHTML=
 <th>الهاتف</th>
 <th>المبلغ</th>
 <th>الحالة</th>
-<th></th>
+<th>الولاية</th>
+<th>إجراء</th>
 </tr>
 
 </thead>
@@ -1669,7 +1877,8 @@ ${(data||[]).map(o=>
 
 <td>
 
-<select onchange="changeOrderStatus(${o.id},this.value)">
+<select
+onchange="changeOrderStatus(${o.id},this.value)">
 
 ${[
 "new",
@@ -1682,7 +1891,7 @@ ${[
 `<option
 ${o.status===s?"selected":""}
 value="${s}">
-${s}
+${statusLabel(s)}
 </option>`
 ).join("")}
 
@@ -1691,6 +1900,31 @@ ${s}
 </td>
 
 <td>${esc(o.wilaya||"")}</td>
+
+<td>
+
+<div class="order-actions">
+
+${
+o.status==="new"
+?
+`<button
+class="green"
+onclick="confirmOrder(${o.id})">
+تأكيد الطلب
+</button>`
+:
+""
+}
+
+<button
+onclick="openInvoice(${o.id})">
+الفاتورة
+</button>
+
+</div>
+
+</td>
 
 </tr>`
 
@@ -1702,7 +1936,53 @@ ${s}
 
 }
 
+/* تأكيد الطلب:
+   new -> processing
+*/
+
+async function confirmOrder(id){
+
+if(!confirm("هل تريد تأكيد هذا الطلب؟"))
+return;
+
+const {error}=await sb
+.from("orders")
+.update({
+status:"processing",
+updated_at:new Date().toISOString()
+})
+.eq("id",id);
+
+if(error){
+
+alert("تعذر تأكيد الطلب:\n"+error.message);
+return;
+
+}
+
+alert("تم تأكيد الطلب بنجاح.");
+
+await loadAdminOrders();
+await renderStats();
+
+}
+
+/* تغيير الحالة */
+
 async function changeOrderStatus(id,status){
+
+const allowed=[
+"new",
+"processing",
+"shipped",
+"delivered",
+"cancelled"
+];
+
+if(!allowed.includes(status)){
+alert("حالة غير مسموحة.");
+return;
+}
 
 const {error}=await sb
 .from("orders")
@@ -1712,13 +1992,365 @@ updated_at:new Date().toISOString()
 })
 .eq("id",id);
 
-if(error)
+if(error){
+
 alert(error.message);
 
-else
-renderStats();
+return;
 
 }
+
+await loadAdminOrders();
+await renderStats();
+
+}
+
+/* ==============================
+   الفاتورة
+============================== */
+
+async function openInvoice(orderId){
+
+const {data:order,error:orderError}=await sb
+.from("orders")
+.select("*")
+.eq("id",orderId)
+.single();
+
+if(orderError){
+
+alert(orderError.message);
+return;
+
+}
+
+/*
+نقرأ عناصر الطلب.
+نستخدم select("*") حتى لا نعتمد على أسماء أعمدة إضافية.
+*/
+
+const {data:items,error:itemError}=await sb
+.from("order_items")
+.select("*")
+.eq("order_id",orderId);
+
+if(itemError){
+
+alert("تعذر تحميل منتجات الفاتورة:\n"+itemError.message);
+return;
+
+}
+
+let productIds=(items||[])
+.map(x=>x.product_id||x.productId)
+.filter(Boolean);
+
+let productMap={};
+
+if(productIds.length){
+
+const {data:prods}=await sb
+.from("products")
+.select("id,name,image_url")
+.in("id",productIds);
+
+(prods||[]).forEach(p=>{
+productMap[p.id]=p;
+});
+
+}
+
+let rows=(items||[]).map((item,index)=>{
+
+const pid=item.product_id||item.productId;
+
+const product=productMap[pid]||{};
+
+const quantity=
+Number(
+item.quantity||
+item.qty||
+1
+);
+
+const unitPrice=
+Number(
+item.unit_price||
+item.price||
+item.product_price||
+0
+);
+
+const lineTotal=
+Number(
+item.total||
+item.line_total||
+(unitPrice*quantity)
+);
+
+return {
+
+name:product.name||
+item.product_name||
+item.name||
+"منتج",
+
+quantity,
+unitPrice,
+lineTotal
+
+};
+
+});
+
+let calculatedSubtotal=
+rows.reduce(
+(a,x)=>a+x.lineTotal,
+0
+);
+
+let subtotal=
+Number(order.subtotal||calculatedSubtotal);
+
+let delivery=
+Number(order.delivery_fee||0);
+
+let total=
+Number(order.total||subtotal+delivery);
+
+document.getElementById("invoiceContent").innerHTML=
+
+`
+
+<div id="printArea">
+
+<div class="invoice">
+
+<div class="invoice-head">
+
+<div>
+
+<div class="invoice-title">
+فاتورة الطلب
+</div>
+
+<div class="muted">
+TijaraPro
+</div>
+
+</div>
+
+<div style="text-align:left">
+
+<b>${esc(order.order_number||"")}</b>
+
+<br>
+
+<span class="muted">
+${new Date(order.created_at).toLocaleString("ar-DZ")}
+</span>
+
+</div>
+
+</div>
+
+<div class="invoice-info">
+
+<div>
+<b>الزبون:</b>
+${esc(order.customer_name||"")}
+</div>
+
+<div>
+<b>الهاتف:</b>
+${esc(order.phone||"")}
+</div>
+
+<div>
+<b>الولاية:</b>
+${esc(order.wilaya||"")}
+</div>
+
+<div>
+<b>البلدية:</b>
+${esc(order.commune||"")}
+</div>
+
+<div>
+<b>العنوان:</b>
+${esc(order.address||"")}
+</div>
+
+<div>
+<b>الدفع:</b>
+${order.payment_method==="cod"?"الدفع عند الاستلام":esc(order.payment_method||"")}
+</div>
+
+</div>
+
+<div style="margin:10px 0">
+
+<b>حالة الطلب:</b>
+
+<span class="${statusClass(order.status)}">
+${esc(statusLabel(order.status))}
+</span>
+
+</div>
+
+<table>
+
+<thead>
+
+<tr>
+<th>#</th>
+<th>المنتج</th>
+<th>الكمية</th>
+<th>السعر</th>
+<th>المجموع</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+${
+rows.length
+?
+rows.map((x,i)=>
+
+`<tr>
+
+<td>${i+1}</td>
+
+<td>${esc(x.name)}</td>
+
+<td>${x.quantity}</td>
+
+<td>${money(x.unitPrice)}</td>
+
+<td>${money(x.lineTotal)}</td>
+
+</tr>`
+
+).join("")
+:
+`<tr>
+<td colspan="5" style="text-align:center">
+لا توجد تفاصيل للمنتجات.
+</td>
+</tr>`
+}
+
+</tbody>
+
+</table>
+
+<div class="invoice-total">
+
+<div class="line">
+<span>مجموع المنتجات</span>
+<b>${money(subtotal)}</b>
+</div>
+
+<div class="line">
+<span>التوصيل</span>
+<b>${money(delivery)}</b>
+</div>
+
+<div class="line" style="font-size:19px">
+<span><b>الإجمالي</b></span>
+<b>${money(total)}</b>
+</div>
+
+</div>
+
+${
+order.notes
+?
+`<div class="notice">
+<b>ملاحظات:</b>
+${esc(order.notes)}
+</div>`
+:
+""
+}
+
+</div>
+
+<div class="print-actions">
+
+<button
+class="green"
+onclick="printInvoice()">
+طباعة الفاتورة
+</button>
+
+${
+order.status==="new"
+?
+`<button
+class="orange"
+onclick="confirmOrderFromInvoice(${order.id})">
+تأكيد الطلب
+</button>`
+:
+""
+}
+
+<button
+class="gray"
+onclick="closeModal('invoiceModal')">
+إغلاق
+</button>
+
+</div>
+
+</div>
+`;
+
+show("invoiceModal");
+
+}
+
+async function confirmOrderFromInvoice(id){
+
+if(!confirm("هل تريد تأكيد هذا الطلب؟"))
+return;
+
+const {error}=await sb
+.from("orders")
+.update({
+status:"processing",
+updated_at:new Date().toISOString()
+})
+.eq("id",id);
+
+if(error){
+
+alert(error.message);
+return;
+
+}
+
+alert("تم تأكيد الطلب.");
+
+closeModal("invoiceModal");
+
+await loadAdminOrders();
+await renderStats();
+
+}
+
+function printInvoice(){
+
+window.print();
+
+}
+
+/* ==============================
+   الزبائن
+============================== */
 
 async function loadAdminCustomers(){
 
@@ -1773,6 +2405,10 @@ ${(data||[]).map(c=>
 </table>`;
 
 }
+
+/* ==============================
+   التوصيل
+============================== */
 
 async function loadAdminDelivery(){
 
@@ -1926,6 +2562,10 @@ else
 loadAdminDelivery();
 
 }
+
+/* ==============================
+   الإعدادات
+============================== */
 
 async function loadAdminSettings(){
 
