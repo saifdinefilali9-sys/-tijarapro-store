@@ -3,3659 +3,771 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
-<meta name="theme-color" content="#111111">
-<title>TijaraPro Store</title>
+<title>TijaraPro - منصة المتاجر</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{
-  box-sizing:border-box;
-  -webkit-tap-highlight-color:transparent;
-}
+*{box-sizing:border-box}
 
-html,body{
+body{
   margin:0;
-  padding:0;
   font-family:Arial,Tahoma,sans-serif;
-  background:#0b0b0b;
+  background:#111;
   color:#fff;
 }
 
-body{
-  min-height:100vh;
-}
-
-button,input,select,textarea{
+button,input{
   font:inherit;
 }
 
-button{
-  cursor:pointer;
-}
-
-.topbar{
-  position:sticky;
-  top:0;
-  z-index:100;
-  background:#111;
-  border-bottom:1px solid #222;
-  padding:14px 16px;
-}
-
-.topbar-inner{
-  max-width:1100px;
+.app{
+  width:100%;
+  max-width:520px;
+  min-height:100vh;
   margin:auto;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:12px;
+  padding:20px;
 }
 
 .logo{
-  font-size:22px;
+  text-align:center;
+  font-size:28px;
   font-weight:900;
-  letter-spacing:1px;
+  margin:25px 0 8px;
 }
 
 .logo span{
   color:#ff8a00;
 }
 
-.cart-btn{
-  position:relative;
-  width:46px;
-  height:46px;
-  border:1px solid #333;
-  border-radius:14px;
-  background:#181818;
-  color:#fff;
-  font-size:21px;
-}
-
-.cart-badge{
-  position:absolute;
-  top:-5px;
-  left:-5px;
-  min-width:20px;
-  height:20px;
-  padding:0 5px;
-  border-radius:20px;
-  background:#ff8a00;
-  color:#111;
-  font-size:12px;
-  font-weight:bold;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
-.delivery-bar{
-  background:#17120d;
-  color:#ffb15c;
-  padding:8px 15px;
+.subtitle{
   text-align:center;
-  font-size:12px;
-}
-
-.container{
-  width:min(1100px,100%);
-  margin:auto;
-  padding:0 14px 90px;
-}
-
-.hero{
-  margin-top:14px;
-  padding:28px 20px;
-  border-radius:22px;
-  background:
-    radial-gradient(circle at 80% 20%,rgba(255,138,0,.18),transparent 35%),
-    linear-gradient(135deg,#181818,#0f0f0f);
-  border:1px solid #252525;
-}
-
-.hero h1{
-  margin:0 0 10px;
-  font-size:30px;
-}
-
-.hero p{
-  margin:0 0 18px;
   color:#aaa;
-  line-height:1.7;
-}
-
-.btn{
-  border:0;
-  border-radius:13px;
-  padding:12px 17px;
-  font-weight:bold;
-  color:#111;
-  background:#ff8a00;
-}
-
-.btn.secondary{
-  color:#fff;
-  background:#222;
-  border:1px solid #333;
-}
-
-.btn.danger{
-  background:#7d2020;
-  color:#fff;
-}
-
-.btn.small{
-  padding:8px 11px;
-  font-size:12px;
-}
-
-.section{
-  margin-top:25px;
-}
-
-.section-title{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  margin-bottom:12px;
-}
-
-.section-title h2{
-  margin:0;
-  font-size:19px;
-}
-
-.search{
-  width:100%;
-  background:#151515;
-  color:#fff;
-  border:1px solid #2d2d2d;
-  border-radius:14px;
-  padding:14px;
-  outline:none;
-}
-
-.search:focus,
-input:focus,
-select:focus,
-textarea:focus{
-  border-color:#ff8a00;
-}
-
-.categories{
-  display:flex;
-  gap:9px;
-  overflow-x:auto;
-  padding-bottom:4px;
-}
-
-.category{
-  flex:0 0 auto;
-  background:#171717;
-  color:#ddd;
-  border:1px solid #292929;
-  border-radius:12px;
-  padding:10px 14px;
-}
-
-.category.active{
-  background:#ff8a00;
-  color:#111;
-  border-color:#ff8a00;
-}
-
-.products{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:11px;
+  margin-bottom:30px;
 }
 
 .card{
-  overflow:hidden;
-  background:#151515;
-  border:1px solid #252525;
-  border-radius:17px;
-}
-
-.product-image{
-  width:100%;
-  aspect-ratio:1/1;
-  object-fit:cover;
-  background:#202020;
-  display:block;
-}
-
-.product-content{
-  padding:11px;
-}
-
-.product-name{
-  font-weight:bold;
-  min-height:42px;
-  line-height:1.5;
-}
-
-.price{
-  color:#ff9a22;
-  font-size:17px;
-  font-weight:900;
-  margin:7px 0;
-}
-
-.old-price{
-  color:#777;
-  text-decoration:line-through;
-  font-size:12px;
-  margin-right:5px;
-}
-
-.card-actions{
-  display:flex;
-  gap:7px;
-}
-
-.card-actions button{
-  flex:1;
-}
-
-.empty{
-  padding:30px;
-  text-align:center;
-  color:#777;
-  border:1px dashed #333;
-  border-radius:15px;
-}
-
-.loading{
-  padding:35px;
-  text-align:center;
-  color:#999;
-}
-
-.modal{
-  position:fixed;
-  inset:0;
-  z-index:500;
-  background:rgba(0,0,0,.75);
-  display:none;
-  align-items:flex-end;
-  justify-content:center;
-}
-
-.modal.show{
-  display:flex;
-}
-
-.modal-box{
-  width:100%;
-  max-width:650px;
-  max-height:92vh;
-  overflow:auto;
-  background:#151515;
-  border:1px solid #2b2b2b;
-  border-radius:22px 22px 0 0;
-  padding:18px;
-}
-
-.modal-head{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
+  background:#1b1b1b;
+  border:1px solid #292929;
+  border-radius:18px;
+  padding:20px;
   margin-bottom:15px;
 }
 
-.modal-head h3{
-  margin:0;
+h2{
+  margin-top:0;
 }
 
-.close{
-  width:40px;
-  height:40px;
-  border:1px solid #333;
-  border-radius:12px;
-  background:#222;
-  color:#fff;
-}
-
-.field{
-  margin-bottom:12px;
-}
-
-.field label{
-  display:block;
-  margin-bottom:6px;
-  color:#bbb;
-  font-size:13px;
-}
-
-.field input,
-.field select,
-.field textarea{
+input{
   width:100%;
-  padding:12px;
-  background:#0f0f0f;
-  color:#fff;
+  padding:15px;
+  margin:8px 0;
   border:1px solid #333;
   border-radius:12px;
+  background:#111;
+  color:#fff;
   outline:none;
 }
 
-.field textarea{
-  min-height:80px;
-  resize:vertical;
+input:focus{
+  border-color:#ff8a00;
 }
 
-.grid2{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-}
-
-.cart-item{
-  display:flex;
-  gap:10px;
-  padding:10px 0;
-  border-bottom:1px solid #282828;
-}
-
-.cart-item img{
-  width:65px;
-  height:65px;
-  object-fit:cover;
-  border-radius:10px;
-  background:#222;
-}
-
-.cart-info{
-  flex:1;
-}
-
-.qty{
-  display:flex;
-  align-items:center;
-  gap:8px;
-  margin-top:7px;
-}
-
-.qty button{
-  width:30px;
-  height:30px;
-  border:1px solid #333;
-  border-radius:9px;
-  background:#222;
-  color:#fff;
-}
-
-.total-box{
-  padding:14px;
-  margin-top:14px;
-  background:#101010;
-  border:1px solid #292929;
-  border-radius:14px;
-}
-
-.total-row{
-  display:flex;
-  justify-content:space-between;
-  padding:5px 0;
-}
-
-.total-row.final{
-  font-size:19px;
-  font-weight:bold;
-  color:#ff9a22;
-  border-top:1px solid #333;
-  margin-top:7px;
-  padding-top:12px;
-}
-
-.bottom-nav{
-  position:fixed;
-  z-index:200;
-  bottom:0;
-  left:0;
-  right:0;
-  background:#111;
-  border-top:1px solid #292929;
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  padding:8px 6px calc(8px + env(safe-area-inset-bottom));
-}
-
-.bottom-nav button{
+button{
+  width:100%;
+  padding:15px;
   border:0;
-  background:none;
-  color:#888;
-  padding:7px 3px;
-  font-size:11px;
-}
-
-.bottom-nav button.active{
-  color:#ff8a00;
-}
-
-.admin-panel{
-  display:none;
-  min-height:100vh;
-  background:#0b0b0b;
-}
-
-.admin-header{
-  position:sticky;
-  top:0;
-  z-index:20;
-  padding:13px;
-  background:#111;
-  border-bottom:1px solid #292929;
-}
-
-.admin-header-inner{
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:10px;
-  max-width:1100px;
-  margin:auto;
-}
-
-.admin-title{
-  font-weight:bold;
-}
-
-.admin-tabs{
-  display:flex;
-  gap:7px;
-  overflow-x:auto;
-  padding:10px;
-  max-width:1100px;
-  margin:auto;
-}
-
-.admin-tabs button{
-  flex:0 0 auto;
-  border:1px solid #333;
-  background:#181818;
-  color:#bbb;
-  border-radius:10px;
-  padding:9px 12px;
-}
-
-.admin-tabs button.active{
+  border-radius:12px;
   background:#ff8a00;
   color:#111;
-}
-
-.admin-content{
-  max-width:1100px;
-  margin:auto;
-  padding:10px 14px 80px;
-}
-
-.admin-section{
-  display:none;
-}
-
-.admin-section.active{
-  display:block;
-}
-
-.stat-grid{
-  display:grid;
-  grid-template-columns:repeat(2,1fr);
-  gap:10px;
-}
-
-.stat{
-  padding:15px;
-  border-radius:15px;
-  background:#161616;
-  border:1px solid #292929;
-}
-
-.stat small{
-  color:#888;
-}
-
-.stat strong{
-  display:block;
-  font-size:22px;
-  color:#ff9a22;
-  margin-top:7px;
-}
-
-.admin-card{
-  background:#151515;
-  border:1px solid #292929;
-  border-radius:15px;
-  padding:13px;
-  margin-bottom:10px;
-}
-
-.admin-card h4{
-  margin:0 0 8px;
-}
-
-.admin-actions{
-  display:flex;
-  flex-wrap:wrap;
-  gap:7px;
-  margin-top:10px;
-}
-
-.order-status{
-  padding:8px;
-  border-radius:9px;
-  background:#0f0f0f;
-  color:#fff;
-  border:1px solid #333;
-}
-
-.login-error{
-  color:#ff5f5f;
-  font-size:13px;
+  font-weight:bold;
+  cursor:pointer;
   margin-top:8px;
 }
 
-.alert{
-  position:fixed;
-  z-index:1000;
-  top:12px;
-  left:12px;
-  right:12px;
-  display:none;
-  padding:14px;
+.secondary{
+  background:#292929;
+  color:#fff;
+}
+
+.hidden{
+  display:none!important;
+}
+
+.message{
+  padding:12px;
+  border-radius:10px;
+  margin-top:12px;
+  background:#292929;
+  color:#ddd;
+  text-align:center;
+}
+
+.store-box{
+  background:#111;
   border-radius:14px;
-  background:#ff8a00;
-  color:#111;
-  font-weight:bold;
-  box-shadow:0 10px 30px rgba(0,0,0,.4);
+  padding:15px;
+  margin-top:15px;
 }
 
-.alert.show{
-  display:block;
+.label{
+  color:#999;
+  font-size:13px;
+  margin-top:10px;
 }
 
-@media(min-width:600px){
-  .products{
-    grid-template-columns:repeat(3,1fr);
-  }
-
-  .modal{
-    align-items:center;
-  }
-
-  .modal-box{
-    border-radius:22px;
-  }
-
-  .stat-grid{
-    grid-template-columns:repeat(4,1fr);
-  }
+.value{
+  font-size:17px;
+  margin-top:4px;
 }
 
-@media(min-width:900px){
-  .products{
-    grid-template-columns:repeat(4,1fr);
-  }
-
-  .bottom-nav{
-    display:none;
-  }
-
-  .container{
-    padding-bottom:30px;
-  }
+.logout{
+  margin-top:20px;
 }
 </style>
 </head>
 
 <body>
 
-<div id="newOrderAlert" class="alert">
-  يوجد طلب جديد في المتجر
-</div>
+<div class="app">
 
-<div id="storeApp">
-
-  <header class="topbar">
-    <div class="topbar-inner">
-      <div class="logo">TIJARA<span>PRO</span></div>
-
-      <button class="cart-btn" onclick="openCart()" aria-label="السلة">
-        🛒
-        <span id="cartCount" class="cart-badge">0</span>
-      </button>
-    </div>
-  </header>
-
-  <div class="delivery-bar">
-    التوصيل متوفر عبر مختلف ولايات الجزائر
+  <div class="logo">
+    TIJARA<span>PRO</span>
   </div>
 
-  <main class="container">
+  <div class="subtitle">
+    أنشئ متجرك الإلكتروني بسهولة
+  </div>
 
-    <section class="hero">
-      <h1 id="storeTitle">تسوق بسهولة</h1>
-      <p id="storeDescription">
-        اكتشف منتجاتنا واطلبها بسهولة مع الدفع عند الاستلام.
-      </p>
-      <button class="btn" onclick="scrollToProducts()">
-        اكتشف المنتجات
-      </button>
-    </section>
+  <!-- AUTH -->
+  <div id="authScreen">
 
-    <section class="section">
+    <div class="card">
+
+      <h2 id="authTitle">إنشاء حساب</h2>
+
       <input
-        id="searchInput"
-        class="search"
-        type="search"
-        placeholder="ابحث عن منتج..."
-        oninput="renderProducts()"
+        id="email"
+        type="email"
+        placeholder="البريد الإلكتروني"
+        autocomplete="email"
       >
-    </section>
 
-    <section class="section">
-      <div class="section-title">
-        <h2>التصنيفات</h2>
-      </div>
+      <input
+        id="password"
+        type="password"
+        placeholder="كلمة المرور"
+        autocomplete="new-password"
+      >
 
-      <div id="categories" class="categories">
-        <button class="category active" onclick="filterCategory('all',this)">
-          الكل
-        </button>
-      </div>
-    </section>
-
-    <section id="productsSection" class="section">
-      <div class="section-title">
-        <h2>المنتجات</h2>
-      </div>
-
-      <div id="products" class="products">
-        <div class="loading">جاري تحميل المنتجات...</div>
-      </div>
-    </section>
-
-  </main>
-
-  <nav class="bottom-nav">
-    <button class="active" onclick="scrollToTop()">⌂<br>الرئيسية</button>
-    <button onclick="scrollToProducts()">▦<br>التصنيفات</button>
-    <button onclick="openCart()">🛒<br>السلة</button>
-    <button onclick="openAdmin()">⚙<br>الإدارة</button>
-  </nav>
-
-</div>
-
-<!-- PRODUCT MODAL -->
-<div id="productModal" class="modal" onclick="closeOutside(event,'productModal')">
-  <div class="modal-box">
-    <div class="modal-head">
-      <h3 id="pmName">المنتج</h3>
-      <button class="close" onclick="closeModal('productModal')">×</button>
-    </div>
-
-    <img id="pmImage"
-         style="width:100%;max-height:320px;object-fit:contain;border-radius:15px;background:#222"
-         src=""
-         alt="">
-
-    <p id="pmDescription" style="color:#aaa;line-height:1.7"></p>
-
-    <div id="pmPrice" class="price"></div>
-
-    <button id="pmAddBtn" class="btn" style="width:100%">
-      إضافة إلى السلة
-    </button>
-  </div>
-</div>
-
-<!-- CART MODAL -->
-<div id="cartModal" class="modal" onclick="closeOutside(event,'cartModal')">
-  <div class="modal-box">
-
-    <div class="modal-head">
-      <h3>السلة</h3>
-      <button class="close" onclick="closeModal('cartModal')">×</button>
-    </div>
-
-    <div id="cartItems"></div>
-
-    <div id="cartTotalBox" class="total-box"></div>
-
-    <button
-      id="checkoutBtn"
-      class="btn"
-      style="width:100%;margin-top:12px"
-      onclick="openCheckout()">
-      متابعة الطلب
-    </button>
-
-  </div>
-</div>
-
-<!-- CHECKOUT -->
-<div id="checkoutModal" class="modal" onclick="closeOutside(event,'checkoutModal')">
-  <div class="modal-box">
-
-    <div class="modal-head">
-      <h3>إتمام الطلب</h3>
-      <button class="close" onclick="closeModal('checkoutModal')">×</button>
-    </div>
-
-    <div class="field">
-      <label>الاسم الكامل</label>
-      <input id="cName" type="text" placeholder="اكتب اسمك الكامل">
-    </div>
-
-    <div class="field">
-      <label>رقم الهاتف</label>
-      <input id="cPhone" type="tel" inputmode="tel" placeholder="05 أو 06 أو 07">
-    </div>
-
-    <div class="field">
-      <label>الولاية</label>
-      <select id="cWilaya" onchange="loadCommunesForWilaya()">
-        <option value="">جاري تحميل الولايات...</option>
-      </select>
-    </div>
-
-    <div class="field">
-      <label>البلدية</label>
-      <select id="cCommune" disabled>
-        <option value="">اختر الولاية أولاً</option>
-      </select>
-    </div>
-
-    <div class="field">
-      <label>العنوان</label>
-      <input id="cAddress" type="text" placeholder="الحي، الشارع، رقم المنزل...">
-    </div>
-
-    <div class="field">
-      <label>ملاحظات</label>
-      <textarea id="cNotes" placeholder="ملاحظات إضافية اختيارية"></textarea>
-    </div>
-
-    <div class="field">
-      <label>طريقة الدفع</label>
-      <select id="cPayment">
-        <option value="cod">الدفع عند الاستلام</option>
-      </select>
-    </div>
-
-    <div id="checkoutTotal" class="total-box"></div>
-
-    <button class="btn" style="width:100%" onclick="createOrder()">
-      تأكيد الطلب
-    </button>
-
-  </div>
-</div>
-
-<!-- SUCCESS -->
-<div id="successModal" class="modal">
-  <div class="modal-box" style="text-align:center">
-
-    <div style="font-size:55px">✓</div>
-
-    <h2>تم إرسال طلبك بنجاح</h2>
-
-    <p style="color:#aaa">
-      شكراً لك. سيتم التواصل معك لتأكيد الطلب.
-    </p>
-
-    <div id="successOrderNumber"
-         style="font-size:18px;color:#ff9a22;font-weight:bold">
-    </div>
-
-    <button class="btn" style="width:100%;margin-top:15px"
-            onclick="closeModal('successModal')">
-      متابعة التسوق
-    </button>
-
-  </div>
-</div>
-
-<!-- ADMIN LOGIN -->
-<div id="adminLoginModal" class="modal">
-  <div class="modal-box">
-
-    <div class="modal-head">
-      <h3>دخول الإدارة</h3>
-      <button class="close" onclick="closeModal('adminLoginModal')">×</button>
-    </div>
-
-    <div class="field">
-      <label>البريد الإلكتروني</label>
-      <input id="adminEmail" type="email" autocomplete="username">
-    </div>
-
-    <div class="field">
-      <label>كلمة المرور</label>
-      <input id="adminPassword" type="password" autocomplete="current-password">
-    </div>
-
-    <button class="btn" style="width:100%" onclick="adminLogin()">
-      دخول
-    </button>
-
-    <div id="loginError" class="login-error"></div>
-
-  </div>
-</div>
-
-<!-- INVOICE -->
-<div id="invoiceModal" class="modal">
-  <div class="modal-box">
-
-    <div class="modal-head">
-      <h3>تفاصيل الطلب</h3>
-      <button class="close" onclick="closeModal('invoiceModal')">×</button>
-    </div>
-
-    <div id="invoiceContent"></div>
-
-    <button class="btn" style="width:100%;margin-top:12px"
-            onclick="printInvoice()">
-      طباعة الفاتورة
-    </button>
-
-  </div>
-</div>
-
-<!-- ADMIN -->
-<div id="adminPanel" class="admin-panel">
-
-  <header class="admin-header">
-    <div class="admin-header-inner">
-      <div class="admin-title">لوحة إدارة TijaraPro</div>
-
-      <button class="btn small" onclick="logoutAdmin()">
-        خروج
+      <button id="authButton" onclick="register()">
+        إنشاء الحساب
       </button>
+
+      <button
+        class="secondary"
+        id="switchButton"
+        onclick="switchAuth()"
+      >
+        لدي حساب بالفعل
+      </button>
+
+      <div id="authMessage" class="message hidden"></div>
+
     </div>
-  </header>
-
-  <div class="admin-tabs">
-
-    <button class="active" onclick="showAdminTab('dashboard',this)">
-      الرئيسية
-    </button>
-
-    <button onclick="showAdminTab('productsAdmin',this)">
-      المنتجات
-    </button>
-
-    <button onclick="showAdminTab('categoriesAdmin',this)">
-      التصنيفات
-    </button>
-
-    <button onclick="showAdminTab('ordersAdmin',this)">
-      الطلبات
-    </button>
-
-    <button onclick="showAdminTab('customersAdmin',this)">
-      الزبائن
-    </button>
-
-    <button onclick="showAdminTab('deliveryAdmin',this)">
-      التوصيل
-    </button>
-
-    <button onclick="showAdminTab('settingsAdmin',this)">
-      الإعدادات
-    </button>
 
   </div>
 
-  <main class="admin-content">
 
-    <!-- DASHBOARD -->
-    <section id="dashboard" class="admin-section active">
+  <!-- CREATE STORE -->
+  <div id="storeScreen" class="hidden">
 
-      <div class="stat-grid">
+    <div class="card">
 
-        <div class="stat">
-          <small>المنتجات</small>
-          <strong id="statProducts">0</strong>
-        </div>
+      <h2>أنشئ متجرك</h2>
 
-        <div class="stat">
-          <small>الطلبات</small>
-          <strong id="statOrders">0</strong>
-        </div>
+      <p style="color:#aaa">
+        أدخل معلومات متجرك لبدء البيع.
+      </p>
 
-        <div class="stat">
-          <small>الزبائن</small>
-          <strong id="statCustomers">0</strong>
-        </div>
+      <input
+        id="storeName"
+        type="text"
+        placeholder="اسم المتجر"
+      >
 
-        <div class="stat">
-          <small>المبيعات</small>
-          <strong id="statSales">0 دج</strong>
-        </div>
+      <input
+        id="storeSlug"
+        type="text"
+        placeholder="رابط المتجر مثال: my-store"
+      >
 
-      </div>
+      <input
+        id="storePhone"
+        type="tel"
+        placeholder="رقم الهاتف"
+      >
 
-      <div class="admin-card" style="margin-top:12px">
-        <h4>آخر الطلبات</h4>
-        <div id="dashboardOrders"></div>
-      </div>
+      <input
+        id="storeWilaya"
+        type="text"
+        placeholder="الولاية"
+      >
 
-    </section>
+      <button onclick="createStore()">
+        إنشاء المتجر
+      </button>
 
-    <!-- PRODUCTS -->
-    <section id="productsAdmin" class="admin-section">
+      <div id="storeMessage" class="message hidden"></div>
 
-      <div class="admin-card">
+    </div>
 
-        <h4>إضافة منتج</h4>
+  </div>
 
-        <div class="field">
-          <label>اسم المنتج</label>
-          <input id="pName" type="text">
-        </div>
 
-        <div class="grid2">
+  <!-- DASHBOARD -->
+  <div id="dashboardScreen" class="hidden">
 
-          <div class="field">
-            <label>السعر</label>
-            <input id="pPrice" type="number">
-          </div>
+    <div class="card">
 
-          <div class="field">
-            <label>السعر القديم</label>
-            <input id="pOldPrice" type="number">
-          </div>
+      <h2>لوحة التحكم</h2>
 
-        </div>
+      <p style="color:#aaa">
+        مرحبًا بك في متجرك.
+      </p>
 
-        <div class="grid2">
+      <div class="store-box">
 
-          <div class="field">
-            <label>المخزون</label>
-            <input id="pStock" type="number" value="0">
-          </div>
+        <div class="label">اسم المتجر</div>
+        <div class="value" id="dashboardName">-</div>
 
-          <div class="field">
-            <label>التصنيف</label>
-            <select id="pCategory"></select>
-          </div>
+        <div class="label">رابط المتجر</div>
+        <div class="value" id="dashboardSlug">-</div>
 
-        </div>
+        <div class="label">رقم الهاتف</div>
+        <div class="value" id="dashboardPhone">-</div>
 
-        <div class="field">
-          <label>رابط الصورة</label>
-          <input id="pImage" type="url" placeholder="رابط الصورة">
-        </div>
-
-        <div class="field">
-          <label>الوصف</label>
-          <textarea id="pDescription"></textarea>
-        </div>
-
-        <button class="btn" onclick="addProduct()">
-          إضافة المنتج
-        </button>
+        <div class="label">الولاية</div>
+        <div class="value" id="dashboardWilaya">-</div>
 
       </div>
 
-      <div id="adminProductsList"></div>
+      <button class="logout" onclick="logout()">
+        تسجيل الخروج
+      </button>
 
-    </section>
+    </div>
 
-    <!-- CATEGORIES -->
-    <section id="categoriesAdmin" class="admin-section">
+  </div>
 
-      <div class="admin-card">
-
-        <h4>إضافة تصنيف</h4>
-
-        <div class="field">
-          <label>اسم التصنيف</label>
-          <input id="categoryName">
-        </div>
-
-        <button class="btn" onclick="addCategory()">
-          إضافة
-        </button>
-
-      </div>
-
-      <div id="adminCategoriesList"></div>
-
-    </section>
-
-    <!-- ORDERS -->
-    <section id="ordersAdmin" class="admin-section">
-      <div id="adminOrdersList"></div>
-    </section>
-
-    <!-- CUSTOMERS -->
-    <section id="customersAdmin" class="admin-section">
-      <div id="adminCustomersList"></div>
-    </section>
-
-    <!-- DELIVERY -->
-    <section id="deliveryAdmin" class="admin-section">
-
-      <div class="admin-card">
-
-        <h4>إضافة منطقة توصيل</h4>
-
-        <div class="field">
-          <label>الولاية</label>
-          <input id="dWilaya" type="text">
-        </div>
-
-        <div class="grid2">
-
-          <div class="field">
-            <label>سعر التوصيل</label>
-            <input id="dFee" type="number" value="0">
-          </div>
-
-          <div class="field">
-            <label>المدة</label>
-            <input id="dDuration" type="text" placeholder="24-48 ساعة">
-          </div>
-
-        </div>
-
-        <button class="btn" onclick="addDelivery()">
-          إضافة
-        </button>
-
-      </div>
-
-      <div id="adminDeliveryList"></div>
-
-    </section>
-
-    <!-- SETTINGS -->
-    <section id="settingsAdmin" class="admin-section">
-
-      <div class="admin-card">
-
-        <h4>إعدادات المتجر</h4>
-
-        <div class="field">
-          <label>اسم المتجر</label>
-          <input id="storeName">
-        </div>
-
-        <div class="field">
-          <label>وصف المتجر</label>
-          <textarea id="storeDesc"></textarea>
-        </div>
-
-        <div class="grid2">
-
-          <div class="field">
-            <label>الهاتف</label>
-            <input id="storePhone">
-          </div>
-
-          <div class="field">
-            <label>واتساب</label>
-            <input id="storeWhatsapp">
-          </div>
-
-        </div>
-
-        <div class="field">
-          <label>رابط الشعار</label>
-          <input id="storeLogo">
-        </div>
-
-        <div class="field">
-          <label>معلومات التوصيل</label>
-          <textarea id="storeDelivery"></textarea>
-        </div>
-
-        <div class="field">
-          <label>سياسة الإرجاع</label>
-          <textarea id="storeReturn"></textarea>
-        </div>
-
-        <button class="btn" onclick="saveSettings()">
-          حفظ الإعدادات
-        </button>
-
-      </div>
-
-    </section>
-
-  </main>
 </div>
+
 
 <script>
-"use strict";
 
-/* =========================================================
-   BASIC HELPERS
-========================================================= */
-
-const $ = id => document.getElementById(id);
+/* =========================
+   SUPABASE
+========================= */
 
 const SUPABASE_URL =
-  "https://kxpzmuxnibmldsmbztgw.supabase.co";
+"https://kxpzmuxnibmldsmbztgw.supabase.co";
 
 const SUPABASE_KEY =
-  "sb_publishable_NOyKqk-zaJ2YeegoBqdbw_P6FMde8L";
+"sb_publishable_NOYkYqk-zaJ2YeegoBqdbw_P6FMde8L";
 
-let sb = null;
+const supabaseClient =
+supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 
-let products = [];
-let categories = [];
-let cart = [];
-let currentCategory = "all";
-let currentAdminOrder = null;
-
-let dzWilayas = [];
-let dzCommunes = [];
 
-const LOCATION_BASE = [
-  "https:",
-  "",
-  "cdn.jsdelivr.net",
-  "gh",
-  "el-amin-dev",
-  "algeria-wilayas-communes@main",
-  "data"
-];
-
-function locationsUrl(file){
-  return LOCATION_BASE.join("/") + "/" + file;
-}
+/* =========================
+   STATE
+========================= */
 
-/* =========================================================
-   SAFE SUPABASE INITIALIZATION
-========================================================= */
+let loginMode = false;
 
-function initSupabase(){
 
-  if(
-    !window.supabase ||
-    typeof window.supabase.createClient !== "function"
-  ){
-    console.error("Supabase library was not loaded.");
+/* =========================
+   ELEMENTS
+========================= */
 
-    const box = $("products");
+const authScreen =
+document.getElementById("authScreen");
 
-    if(box){
-      box.innerHTML =
-        '<div class="empty">تعذر تشغيل المتجر. أعد تحميل الصفحة.</div>';
-    }
+const storeScreen =
+document.getElementById("storeScreen");
 
-    return false;
-  }
+const dashboardScreen =
+document.getElementById("dashboardScreen");
 
-  try{
+const authTitle =
+document.getElementById("authTitle");
 
-    sb = window.supabase.createClient(
-      SUPABASE_URL,
-      SUPABASE_KEY
-    );
+const authButton =
+document.getElementById("authButton");
 
-    return true;
-
-  }catch(error){
+const switchButton =
+document.getElementById("switchButton");
 
-    console.error(error);
-
-    return false;
-  }
-}
-
-/* =========================================================
-   GENERAL
-========================================================= */
-
-function money(value){
-  return Number(value || 0).toLocaleString("ar-DZ") + " دج";
-}
-
-function escapeHtml(value){
+const authMessage =
+document.getElementById("authMessage");
 
-  return String(value ?? "")
-    .replace(/&/g,"&amp;")
-    .replace(/</g,"&lt;")
-    .replace(/>/g,"&gt;")
-    .replace(/"/g,"&quot;")
-    .replace(/'/g,"&#039;");
-}
+const storeMessage =
+document.getElementById("storeMessage");
 
-function openModal(id){
-  const el = $(id);
-  if(el) el.classList.add("show");
-}
 
-function closeModal(id){
-  const el = $(id);
-  if(el) el.classList.remove("show");
-}
-
-function closeOutside(event,id){
+/* =========================
+   AUTH MODE
+========================= */
 
-  if(event.target === $(id)){
-    closeModal(id);
-  }
-}
+function switchAuth(){
 
-function scrollToTop(){
-  window.scrollTo({
-    top:0,
-    behavior:"smooth"
-  });
-}
+  loginMode = !loginMode;
 
-function scrollToProducts(){
+  if(loginMode){
 
-  const el = $("productsSection");
+    authTitle.textContent = "تسجيل الدخول";
 
-  if(el){
-    el.scrollIntoView({
-      behavior:"smooth",
-      block:"start"
-    });
-  }
-}
+    authButton.textContent = "دخول";
 
-/* =========================================================
-   STORE
-========================================================= */
-
-async function loadStoreSettings(){
-
-  if(!sb) return;
-
-  try{
-
-    const {data,error} =
-      await sb
-      .from("store_settings")
-      .select("*")
-      .limit(1)
-      .maybeSingle();
-
-    if(error){
-      console.warn(error);
-      return;
-    }
-
-    if(!data) return;
-
-    const name =
-      data.name ||
-      data.store_name ||
-      "TijaraPro";
-
-    const desc =
-      data.description ||
-      data.store_description ||
-      "اكتشف منتجاتنا واطلبها بسهولة.";
-
-    if($("storeTitle")){
-      $("storeTitle").textContent = "تسوق بسهولة";
-    }
-
-    if($("storeDescription")){
-      $("storeDescription").textContent = desc;
-    }
-
-    if($("storeName")){
-      $("storeName").value = name;
-    }
-
-    if($("storeDesc")){
-      $("storeDesc").value = desc;
-    }
-
-    if($("storePhone")){
-      $("storePhone").value = data.phone || "";
-    }
-
-    if($("storeWhatsapp")){
-      $("storeWhatsapp").value = data.whatsapp || "";
-    }
-
-    if($("storeLogo")){
-      $("storeLogo").value = data.logo || data.logo_url || "";
-    }
-
-    if($("storeDelivery")){
-      $("storeDelivery").value =
-        data.delivery_info || "";
-    }
-
-    if($("storeReturn")){
-      $("storeReturn").value =
-        data.return_policy || "";
-    }
-
-  }catch(error){
-
-    console.error(error);
-  }
-}
-
-async function loadProducts(){
-
-  if(!sb) return;
-
-  const box = $("products");
-
-  if(box){
-    box.innerHTML =
-      '<div class="loading">جاري تحميل المنتجات...</div>';
-  }
-
-  try{
-
-    const {data,error} =
-      await sb
-      .from("products")
-      .select("*")
-      .eq("available",true)
-      .order("featured",{ascending:false})
-      .order("created_at",{ascending:false});
-
-    if(error) throw error;
-
-    products = data || [];
-
-    renderProducts();
-
-  }catch(error){
-
-    console.error(error);
-
-    if(box){
-      box.innerHTML =
-        '<div class="empty">تعذر تحميل المنتجات.</div>';
-    }
-  }
-}
-
-async function loadCategories(){
-
-  if(!sb) return;
-
-  try{
-
-    const {data,error} =
-      await sb
-      .from("categories")
-      .select("*")
-      .order("name");
-
-    if(error) throw error;
-
-    categories = data || [];
-
-    renderCategories();
-
-    fillProductCategories();
-
-  }catch(error){
-
-    console.error(error);
-  }
-}
-
-function renderCategories(){
-
-  const box = $("categories");
-
-  if(!box) return;
-
-  let html =
-    '<button class="category active" onclick="filterCategory(\'all\',this)">الكل</button>';
-
-  categories.forEach(category => {
-
-    const id = category.id;
-    const name = category.name || "";
-
-    html += `
-      <button
-        class="category"
-        onclick="filterCategory(${Number(id)},this)">
-        ${escapeHtml(name)}
-      </button>
-    `;
-  });
-
-  box.innerHTML = html;
-}
-
-function filterCategory(id,button){
-
-  currentCategory = id;
-
-  document
-    .querySelectorAll(".category")
-    .forEach(el => el.classList.remove("active"));
-
-  if(button){
-    button.classList.add("active");
-  }
-
-  renderProducts();
-}
-
-function renderProducts(){
-
-  const box = $("products");
-
-  if(!box) return;
-
-  const query =
-    ($("searchInput")?.value || "")
-    .trim()
-    .toLowerCase();
-
-  let list = products.filter(product => {
-
-    const matchesCategory =
-      currentCategory === "all" ||
-      String(product.category_id) === String(currentCategory);
-
-    const text =
-      `${product.name || ""} ${product.description || ""}`
-      .toLowerCase();
-
-    const matchesSearch =
-      !query || text.includes(query);
-
-    return matchesCategory && matchesSearch;
-  });
-
-  if(!list.length){
-
-    box.innerHTML =
-      '<div class="empty">لا توجد منتجات حالياً.</div>';
-
-    return;
-  }
-
-  box.innerHTML = list.map(product => {
-
-    const image =
-      product.image_url ||
-      "https://placehold.co/600x600/202020/ffffff?text=TijaraPro";
-
-    const stock =
-      Number(product.stock || 0);
-
-    return `
-      <article class="card">
-
-        <img
-          class="product-image"
-          src="${escapeHtml(image)}"
-          alt="${escapeHtml(product.name)}"
-          loading="lazy"
-          onerror="this.src='https://placehold.co/600x600/202020/ffffff?text=TijaraPro'"
-        >
-
-        <div class="product-content">
-
-          <div class="product-name">
-            ${escapeHtml(product.name)}
-          </div>
-
-          <div class="price">
-            ${money(product.price)}
-
-            ${
-              product.old_price
-              ? `<span class="old-price">${money(product.old_price)}</span>`
-              : ""
-            }
-          </div>
-
-          <div style="font-size:11px;color:#777;margin-bottom:8px">
-            ${
-              stock > 0
-              ? "متوفر"
-              : "غير متوفر"
-            }
-          </div>
-
-          <div class="card-actions">
-
-            <button
-              class="btn small"
-              onclick="addToCart(${Number(product.id)})"
-              ${stock <= 0 ? "disabled" : ""}>
-              إضافة
-            </button>
-
-            <button
-              class="btn secondary small"
-              onclick="showProduct(${Number(product.id)})">
-              التفاصيل
-            </button>
-
-          </div>
-
-        </div>
-      </article>
-    `;
-
-  }).join("");
-}
-
-function showProduct(id){
-
-  const product =
-    products.find(p => Number(p.id) === Number(id));
-
-  if(!product) return;
-
-  $("pmName").textContent =
-    product.name || "المنتج";
-
-  $("pmDescription").textContent =
-    product.description || "";
-
-  $("pmPrice").textContent =
-    money(product.price);
-
-  $("pmImage").src =
-    product.image_url ||
-    "https://placehold.co/600x600/202020/ffffff?text=TijaraPro";
-
-  $("pmAddBtn").onclick = function(){
-
-    addToCart(product.id);
-    closeModal("productModal");
-    openCart();
-  };
-
-  openModal("productModal");
-}
-
-/* =========================================================
-   CART
-========================================================= */
-
-function saveCart(){
-  try{
-    localStorage.setItem(
-      "tijarapro_cart",
-      JSON.stringify(cart)
-    );
-  }catch(error){}
-}
-
-function loadCart(){
-
-  try{
-
-    const saved =
-      localStorage.getItem("tijarapro_cart");
-
-    cart = saved
-      ? JSON.parse(saved)
-      : [];
-
-    if(!Array.isArray(cart)){
-      cart = [];
-    }
-
-  }catch(error){
-
-    cart = [];
-  }
-
-  updateCartCount();
-}
-
-function addToCart(productId){
-
-  const product =
-    products.find(p =>
-      Number(p.id) === Number(productId)
-    );
-
-  if(!product) return;
-
-  if(Number(product.stock || 0) <= 0){
-
-    alert("هذا المنتج غير متوفر حالياً.");
-    return;
-  }
-
-  const existing =
-    cart.find(i =>
-      Number(i.productId) === Number(productId)
-    );
-
-  if(existing){
-
-    if(existing.quantity >= Number(product.stock || 0)){
-
-      alert("لا توجد كمية إضافية متوفرة.");
-      return;
-    }
-
-    existing.quantity++;
+    switchButton.textContent =
+      "ليس لدي حساب";
 
   }else{
 
-    cart.push({
-      productId:product.id,
-      name:product.name,
-      price:Number(product.price || 0),
-      image:product.image_url || "",
-      quantity:1
-    });
+    authTitle.textContent = "إنشاء حساب";
+
+    authButton.textContent =
+      "إنشاء الحساب";
+
+    switchButton.textContent =
+      "لدي حساب بالفعل";
+
   }
 
-  saveCart();
-  updateCartCount();
-
-  alert("تمت إضافة المنتج إلى السلة.");
+  hideMessage(authMessage);
 }
 
-function removeFromCart(productId){
 
-  cart =
-    cart.filter(i =>
-      Number(i.productId) !== Number(productId)
-    );
+/* =========================
+   MESSAGE
+========================= */
 
-  saveCart();
-  updateCartCount();
-  renderCart();
+function showMessage(element,text){
+
+  element.textContent = text;
+  element.classList.remove("hidden");
+
 }
 
-function changeQty(productId,delta){
+function hideMessage(element){
 
-  const item =
-    cart.find(i =>
-      Number(i.productId) === Number(productId)
-    );
+  element.classList.add("hidden");
 
-  if(!item) return;
-
-  const product =
-    products.find(p =>
-      Number(p.id) === Number(productId)
-    );
-
-  const maxStock =
-    Number(product?.stock || 999999);
-
-  item.quantity += delta;
-
-  if(item.quantity > maxStock){
-    item.quantity = maxStock;
-  }
-
-  if(item.quantity <= 0){
-
-    removeFromCart(productId);
-    return;
-  }
-
-  saveCart();
-  updateCartCount();
-  renderCart();
 }
 
-function cartSubtotal(){
 
-  return cart.reduce(
-    (sum,item) =>
-      sum +
-      Number(item.price || 0) *
-      Number(item.quantity || 0),
-    0
-  );
-}
+/* =========================
+   REGISTER / LOGIN
+========================= */
 
-function updateCartCount(){
+async function register(){
 
-  const count =
-    cart.reduce(
-      (sum,item) =>
-        sum + Number(item.quantity || 0),
-      0
-    );
-
-  if($("cartCount")){
-    $("cartCount").textContent = count;
-  }
-}
-
-function renderCart(){
-
-  const box = $("cartItems");
-  const total = $("cartTotalBox");
-  const checkout = $("checkoutBtn");
-
-  if(!box) return;
-
-  if(!cart.length){
-
-    box.innerHTML =
-      '<div class="empty">السلة فارغة.</div>';
-
-    if(total){
-      total.innerHTML =
-        '<div class="total-row final"><span>المجموع</span><span>0 دج</span></div>';
-    }
-
-    if(checkout){
-      checkout.disabled = true;
-    }
-
-    return;
-  }
-
-  if(checkout){
-    checkout.disabled = false;
-  }
-
-  box.innerHTML = cart.map(item => {
-
-    const image =
-      item.image ||
-      "https://placehold.co/150x150/202020/ffffff?text=TP";
-
-    return `
-      <div class="cart-item">
-
-        <img
-          src="${escapeHtml(image)}"
-          alt=""
-          onerror="this.src='https://placehold.co/150x150/202020/ffffff?text=TP'"
-        >
-
-        <div class="cart-info">
-
-          <strong>${escapeHtml(item.name)}</strong>
-
-          <div style="color:#ff9a22;margin-top:4px">
-            ${money(item.price)}
-          </div>
-
-          <div class="qty">
-
-            <button onclick="changeQty(${Number(item.productId)},-1)">
-              −
-            </button>
-
-            <strong>${Number(item.quantity)}</strong>
-
-            <button onclick="changeQty(${Number(item.productId)},1)">
-              +
-            </button>
-
-            <button
-              onclick="removeFromCart(${Number(item.productId)})"
-              style="margin-right:auto;color:#ff6666">
-              حذف
-            </button>
-
-          </div>
-
-        </div>
-
-      </div>
-    `;
-
-  }).join("");
-
-  const subtotal = cartSubtotal();
-
-  total.innerHTML = `
-    <div class="total-row">
-      <span>المجموع</span>
-      <strong>${money(subtotal)}</strong>
-    </div>
-
-    <div class="total-row final">
-      <span>الإجمالي</span>
-      <span>${money(subtotal)}</span>
-    </div>
-  `;
-}
-
-function openCart(){
-
-  renderCart();
-  openModal("cartModal");
-}
-
-/* =========================================================
-   ALGERIA LOCATIONS
-========================================================= */
-
-async function loadAlgeriaLocations(){
-
-  const wilayaSelect = $("cWilaya");
-
-  if(!wilayaSelect) return;
-
-  wilayaSelect.innerHTML =
-    '<option value="">جاري تحميل الولايات...</option>';
-
-  try{
-
-    const results =
-      await Promise.all([
-        fetch(locationsUrl("wilayas.json")),
-        fetch(locationsUrl("communes.json"))
-      ]);
-
-    if(!results[0].ok || !results[1].ok){
-      throw new Error("Location data unavailable");
-    }
-
-    const wJson =
-      await results[0].json();
-
-    const cJson =
-      await results[1].json();
-
-    dzWilayas =
-      Array.isArray(wJson)
-      ? wJson
-      : (wJson.wilayas || []);
-
-    dzCommunes =
-      Array.isArray(cJson)
-      ? cJson
-      : (cJson.communes || []);
-
-    fillWilayas();
-
-  }catch(error){
-
-    console.error(error);
-
-    wilayaSelect.innerHTML =
-      '<option value="">تعذر تحميل الولايات</option>';
-
-    const commune = $("cCommune");
-
-    if(commune){
-      commune.innerHTML =
-        '<option value="">أعد تحميل الصفحة</option>';
-
-      commune.disabled = true;
-    }
-  }
-}
-
-function getWilayaCode(w){
-
-  return (
-    w.code ??
-    w.id ??
-    w.wilaya_code ??
-    w.wilayaCode ??
-    ""
-  );
-}
-
-function getWilayaName(w){
-
-  return (
-    w.name_ar ??
-    w.nom_ar ??
-    w.name?.ar ??
-    w.name?.local ??
-    w.name ??
-    ""
-  );
-}
-
-function getCommuneWilayaCode(c){
-
-  return String(
-    c.wilaya_code ??
-    c.wilaya_id ??
-    c.wilayaCode ??
-    ""
-  );
-}
-
-function getCommuneName(c){
-
-  return (
-    c.name_ar ??
-    c.nom_ar ??
-    c.commune_name ??
-    c.name?.ar ??
-    c.name?.local ??
-    c.name ??
-    ""
-  );
-}
-
-function fillWilayas(){
-
-  const select = $("cWilaya");
-
-  if(!select) return;
-
-  const sorted =
-    [...dzWilayas].sort(
-      (a,b) =>
-        Number(getWilayaCode(a)) -
-        Number(getWilayaCode(b))
-    );
-
-  select.innerHTML =
-    '<option value="">اختر الولاية</option>' +
-
-    sorted.map(w => {
-
-      const code =
-        getWilayaCode(w);
-
-      const name =
-        getWilayaName(w);
-
-      return `
-        <option value="${escapeHtml(code)}">
-          ${escapeHtml(String(code).padStart(2,"0"))}
-          -
-          ${escapeHtml(name)}
-        </option>
-      `;
-
-    }).join("");
-
-  const commune = $("cCommune");
-
-  if(commune){
-
-    commune.innerHTML =
-      '<option value="">اختر الولاية أولاً</option>';
-
-    commune.disabled = true;
-  }
-}
-
-function loadCommunesForWilaya(){
-
-  const wilaya =
-    $("cWilaya");
-
-  const commune =
-    $("cCommune");
-
-  if(!wilaya || !commune) return;
-
-  const wilayaId =
-    String(wilaya.value);
-
-  if(!wilayaId){
-
-    commune.innerHTML =
-      '<option value="">اختر الولاية أولاً</option>';
-
-    commune.disabled = true;
-
-    return;
-  }
-
-  const list =
-    dzCommunes
-    .filter(c =>
-      getCommuneWilayaCode(c) === wilayaId
-    )
-    .sort((a,b) =>
-      String(getCommuneName(a))
-      .localeCompare(
-        String(getCommuneName(b)),
-        "ar"
-      )
-    );
-
-  if(!list.length){
-
-    commune.innerHTML =
-      '<option value="">لا توجد بلديات لهذه الولاية</option>';
-
-    commune.disabled = true;
-
-    return;
-  }
-
-  commune.innerHTML =
-    '<option value="">اختر البلدية</option>' +
-
-    list.map(c => {
-
-      const name =
-        getCommuneName(c);
-
-      return `
-        <option value="${escapeHtml(name)}">
-          ${escapeHtml(name)}
-        </option>
-      `;
-
-    }).join("");
-
-  commune.disabled = false;
-}
-
-/* =========================================================
-   CHECKOUT
-========================================================= */
-
-function openCheckout(){
-
-  if(!cart.length){
-
-    alert("السلة فارغة.");
-    return;
-  }
-
-  renderCheckoutTotal();
-
-  closeModal("cartModal");
-  openModal("checkoutModal");
-}
-
-function renderCheckoutTotal(){
-
-  const total =
-    $("checkoutTotal");
-
-  if(!total) return;
-
-  total.innerHTML = `
-    <div class="total-row">
-      <span>المنتجات</span>
-      <strong>${money(cartSubtotal())}</strong>
-    </div>
-
-    <div class="total-row">
-      <span>التوصيل</span>
-      <strong>يحدد حسب المنطقة</strong>
-    </div>
-
-    <div class="total-row final">
-      <span>الإجمالي</span>
-      <span>${money(cartSubtotal())}</span>
-    </div>
-  `;
-}
-
-async function createOrder(){
-
-  if(!sb){
-
-    alert("المتجر غير متصل بقاعدة البيانات.");
-    return;
-  }
-
-  if(!cart.length){
-
-    alert("السلة فارغة.");
-    return;
-  }
-
-  const name =
-    ($("cName")?.value || "").trim();
-
-  const phone =
-    ($("cPhone")?.value || "").trim();
-
-  const wilaya =
-    ($("cWilaya")?.value || "").trim();
-
-  const commune =
-    ($("cCommune")?.value || "").trim();
-
-  const address =
-    ($("cAddress")?.value || "").trim();
-
-  const notes =
-    ($("cNotes")?.value || "").trim();
-
-  if(
-    !name ||
-    !phone ||
-    !wilaya ||
-    !commune ||
-    !address
-  ){
-
-    alert(
-      "أكمل الاسم والهاتف والولاية والبلدية والعنوان."
-    );
-
-    return;
-  }
-
-  if(!/^0[567][0-9]{8}$/.test(phone)){
-
-    alert(
-      "أدخل رقم هاتف جزائري صحيح من 10 أرقام."
-    );
-
-    return;
-  }
-
-  const payment =
-    $("cPayment")?.value || "cod";
-
-  const button =
-    document.querySelector(
-      '#checkoutModal .btn'
-    );
-
-  if(button){
-
-    button.disabled = true;
-    button.textContent = "جاري إرسال الطلب...";
-  }
-
-  try{
-
-    const {data,error} =
-      await sb.rpc(
-        "create_order",
-        {
-          p_customer_name:name,
-          p_phone:phone,
-          p_wilaya:wilaya,
-          p_commune:commune,
-          p_address:address,
-          p_notes:notes,
-          p_items:cart.map(item => ({
-            productId:item.productId,
-            quantity:item.quantity
-          }))
-        }
-      );
-
-    if(error) throw error;
-
-    let orderNumber = "";
-
-    if(Array.isArray(data)){
-      orderNumber =
-        data[0]?.order_number ||
-        data[0]?.orderNumber ||
-        "";
-    }else if(data){
-      orderNumber =
-        data.order_number ||
-        data.orderNumber ||
-        data.id ||
-        "";
-    }
-
-    $("successOrderNumber").textContent =
-      orderNumber
-      ? "رقم الطلب: " + orderNumber
-      : "تم تسجيل الطلب بنجاح";
-
-    cart = [];
-
-    saveCart();
-    updateCartCount();
-
-    closeModal("checkoutModal");
-    openModal("successModal");
-
-    if($("cName")) $("cName").value = "";
-    if($("cPhone")) $("cPhone").value = "";
-    if($("cWilaya")) $("cWilaya").value = "";
-    if($("cCommune")){
-      $("cCommune").innerHTML =
-        '<option value="">اختر الولاية أولاً</option>';
-      $("cCommune").disabled = true;
-    }
-    if($("cAddress")) $("cAddress").value = "";
-    if($("cNotes")) $("cNotes").value = "";
-
-    await loadProducts();
-
-  }catch(error){
-
-    console.error(error);
-
-    alert(
-      "تعذر إرسال الطلب.\n" +
-      (error.message || "حدث خطأ غير معروف.")
-    );
-
-  }finally{
-
-    if(button){
-
-      button.disabled = false;
-      button.textContent = "تأكيد الطلب";
-    }
-  }
-}
-
-/* =========================================================
-   ADMIN LOGIN
-========================================================= */
-
-function openAdmin(){
-
-  if(
-    $("adminPanel") &&
-    $("adminPanel").style.display === "block"
-  ){
-    return;
-  }
-
-  openModal("adminLoginModal");
-}
-
-async function adminLogin(){
-
-  if(!sb) return;
+  hideMessage(authMessage);
 
   const email =
-    ($("adminEmail")?.value || "").trim();
+    document.getElementById("email").value.trim();
 
   const password =
-    $("adminPassword")?.value || "";
-
-  const errorBox =
-    $("loginError");
-
-  if(errorBox){
-    errorBox.textContent = "";
-  }
+    document.getElementById("password").value;
 
   if(!email || !password){
 
-    if(errorBox){
-      errorBox.textContent =
-        "أدخل البريد وكلمة المرور.";
-    }
-
-    return;
-  }
-
-  try{
-
-    const {data,error} =
-      await sb.auth.signInWithPassword({
-        email,
-        password
-      });
-
-    if(error) throw error;
-
-    const user =
-      data?.user;
-
-    if(!user){
-      throw new Error("لم يتم تسجيل الدخول.");
-    }
-
-    const {data:admin,error:adminError} =
-      await sb
-      .from("admin_users")
-      .select("*")
-      .eq("id",user.id)
-      .maybeSingle();
-
-    if(adminError) throw adminError;
-
-    if(!admin){
-
-      await sb.auth.signOut();
-
-      throw new Error(
-        "هذا الحساب ليس حساب إدارة."
-      );
-    }
-
-    closeModal("adminLoginModal");
-
-    $("storeApp").style.display = "none";
-    $("adminPanel").style.display = "block";
-
-    await loadAdmin();
-
-  }catch(error){
-
-    console.error(error);
-
-    if(errorBox){
-      errorBox.textContent =
-        error.message ||
-        "بيانات الدخول غير صحيحة.";
-    }
-  }
-}
-
-async function logoutAdmin(){
-
-  try{
-    if(sb){
-      await sb.auth.signOut();
-    }
-  }catch(error){
-    console.error(error);
-  }
-
-  $("adminPanel").style.display = "none";
-  $("storeApp").style.display = "block";
-
-  scrollToTop();
-}
-
-/* =========================================================
-   ADMIN TABS
-========================================================= */
-
-function showAdminTab(id,button){
-
-  document
-    .querySelectorAll(".admin-section")
-    .forEach(section =>
-      section.classList.remove("active")
-    );
-
-  document
-    .querySelectorAll(".admin-tabs button")
-    .forEach(btn =>
-      btn.classList.remove("active")
-    );
-
-  const section = $(id);
-
-  if(section){
-    section.classList.add("active");
-  }
-
-  if(button){
-    button.classList.add("active");
-  }
-
-  if(id === "dashboard"){
-    loadAdminDashboard();
-  }
-
-  if(id === "productsAdmin"){
-    loadAdminProducts();
-  }
-
-  if(id === "categoriesAdmin"){
-    loadAdminCategories();
-  }
-
-  if(id === "ordersAdmin"){
-    loadAdminOrders();
-  }
-
-  if(id === "customersAdmin"){
-    loadAdminCustomers();
-  }
-
-  if(id === "deliveryAdmin"){
-    loadAdminDelivery();
-  }
-
-  if(id === "settingsAdmin"){
-    loadStoreSettings();
-  }
-}
-
-/* =========================================================
-   ADMIN DASHBOARD
-========================================================= */
-
-async function loadAdmin(){
-
-  await Promise.all([
-    loadAdminDashboard(),
-    loadAdminProducts(),
-    loadAdminCategories(),
-    loadAdminOrders(),
-    loadAdminCustomers(),
-    loadAdminDelivery(),
-    loadStoreSettings()
-  ]);
-}
-
-async function loadAdminDashboard(){
-
-  if(!sb) return;
-
-  try{
-
-    const [
-      productsRes,
-      ordersRes,
-      customersRes
-    ] = await Promise.all([
-
-      sb
-      .from("products")
-      .select("id,price,stock",{
-        count:"exact"
-      }),
-
-      sb
-      .from("orders")
-      .select("id,total,status,customer_name,created_at",{
-        count:"exact"
-      })
-      .order("created_at",{ascending:false})
-      .limit(10),
-
-      sb
-      .from("customers")
-      .select("id",{
-        count:"exact"
-      })
-
-    ]);
-
-    const productCount =
-      productsRes.count || 0;
-
-    const orders =
-      ordersRes.data || [];
-
-    const customerCount =
-      customersRes.count || 0;
-
-    const sales =
-      orders
-      .filter(o =>
-        ["processing","shipped","delivered"]
-        .includes(o.status)
-      )
-      .reduce(
-        (sum,o) =>
-          sum + Number(o.total || 0),
-        0
-      );
-
-    $("statProducts").textContent =
-      productCount;
-
-    $("statOrders").textContent =
-      ordersRes.count || 0;
-
-    $("statCustomers").textContent =
-      customerCount;
-
-    $("statSales").textContent =
-      money(sales);
-
-    renderDashboardOrders(orders);
-
-  }catch(error){
-
-    console.error(error);
-  }
-}
-
-function renderDashboardOrders(list){
-
-  const box =
-    $("dashboardOrders");
-
-  if(!box) return;
-
-  if(!list.length){
-
-    box.innerHTML =
-      '<div class="empty">لا توجد طلبات.</div>';
-
-    return;
-  }
-
-  box.innerHTML =
-    list.map(order => `
-      <div style="padding:10px 0;border-bottom:1px solid #292929">
-
-        <strong>
-          ${escapeHtml(order.order_number || ("#" + order.id))}
-        </strong>
-
-        <div style="color:#aaa;font-size:12px">
-          ${escapeHtml(order.customer_name || "")}
-        </div>
-
-        <div style="color:#ff9a22">
-          ${money(order.total)}
-        </div>
-
-      </div>
-    `).join("");
-}
-
-/* =========================================================
-   ADMIN PRODUCTS
-========================================================= */
-
-function fillProductCategories(){
-
-  const select =
-    $("pCategory");
-
-  if(!select) return;
-
-  select.innerHTML =
-    '<option value="">بدون تصنيف</option>' +
-
-    categories.map(c =>
-      `<option value="${Number(c.id)}">
-        ${escapeHtml(c.name)}
-      </option>`
-    ).join("");
-}
-
-async function loadAdminProducts(){
-
-  if(!sb) return;
-
-  try{
-
-    const {data,error} =
-      await sb
-      .from("products")
-      .select("*")
-      .order("created_at",{ascending:false});
-
-    if(error) throw error;
-
-    renderAdminProducts(data || []);
-
-  }catch(error){
-
-    console.error(error);
-  }
-}
-
-function renderAdminProducts(list){
-
-  const box =
-    $("adminProductsList");
-
-  if(!box) return;
-
-  if(!list.length){
-
-    box.innerHTML =
-      '<div class="empty">لا توجد منتجات.</div>';
-
-    return;
-  }
-
-  box.innerHTML =
-    list.map(product => `
-
-      <div class="admin-card">
-
-        <h4>${escapeHtml(product.name)}</h4>
-
-        <div style="color:#ff9a22">
-          ${money(product.price)}
-        </div>
-
-        <div style="color:#aaa;font-size:13px">
-          المخزون: ${Number(product.stock || 0)}
-        </div>
-
-        <div class="admin-actions">
-
-          <button
-            class="btn danger small"
-            onclick="deleteProduct(${Number(product.id)})">
-            حذف
-          </button>
-
-          <button
-            class="btn secondary small"
-            onclick="toggleProduct(${Number(product.id)},${product.available ? "false" : "true"})">
-            ${product.available ? "إخفاء" : "إظهار"}
-          </button>
-
-        </div>
-
-      </div>
-
-    `).join("");
-}
-
-async function addProduct(){
-
-  if(!sb) return;
-
-  const name =
-    ($("pName")?.value || "").trim();
-
-  const price =
-    Number($("pPrice")?.value || 0);
-
-  const oldPrice =
-    Number($("pOldPrice")?.value || 0);
-
-  const stock =
-    Number($("pStock")?.value || 0);
-
-  const category =
-    $("pCategory")?.value || null;
-
-  const image =
-    ($("pImage")?.value || "").trim();
-
-  const description =
-    ($("pDescription")?.value || "").trim();
-
-  if(!name || price <= 0){
-
-    alert("أدخل اسم المنتج والسعر.");
-    return;
-  }
-
-  try{
-
-    const {error} =
-      await sb
-      .from("products")
-      .insert({
-        name,
-        price,
-        old_price:oldPrice || null,
-        stock,
-        category_id:category
-          ? Number(category)
-          : null,
-        image_url:image || null,
-        description,
-        available:true,
-        featured:false
-      });
-
-    if(error) throw error;
-
-    alert("تمت إضافة المنتج.");
-
-    $("pName").value = "";
-    $("pPrice").value = "";
-    $("pOldPrice").value = "";
-    $("pStock").value = "0";
-    $("pImage").value = "";
-    $("pDescription").value = "";
-
-    await loadProducts();
-    await loadAdminProducts();
-
-  }catch(error){
-
-    console.error(error);
-    alert(error.message || "تعذر إضافة المنتج.");
-  }
-}
-
-async function deleteProduct(id){
-
-  if(!confirm("هل تريد حذف المنتج؟")){
-    return;
-  }
-
-  try{
-
-    const {error} =
-      await sb
-      .from("products")
-      .delete()
-      .eq("id",id);
-
-    if(error) throw error;
-
-    await loadProducts();
-    await loadAdminProducts();
-
-  }catch(error){
-
-    console.error(error);
-    alert(error.message || "تعذر حذف المنتج.");
-  }
-}
-
-async function toggleProduct(id,available){
-
-  try{
-
-    const {error} =
-      await sb
-      .from("products")
-      .update({
-        available
-      })
-      .eq("id",id);
-
-    if(error) throw error;
-
-    await loadProducts();
-    await loadAdminProducts();
-
-  }catch(error){
-
-    console.error(error);
-    alert(error.message || "تعذر تعديل المنتج.");
-  }
-}
-
-/* =========================================================
-   ADMIN CATEGORIES
-========================================================= */
-
-async function loadAdminCategories(){
-
-  if(!sb) return;
-
-  try{
-
-    const {data,error} =
-      await sb
-      .from("categories")
-      .select("*")
-      .order("name");
-
-    if(error) throw error;
-
-    categories = data || [];
-
-    renderAdminCategories();
-    renderCategories();
-    fillProductCategories();
-
-  }catch(error){
-
-    console.error(error);
-  }
-}
-
-function renderAdminCategories(){
-
-  const box =
-    $("adminCategoriesList");
-
-  if(!box) return;
-
-  if(!categories.length){
-
-    box.innerHTML =
-      '<div class="empty">لا توجد تصنيفات.</div>';
-
-    return;
-  }
-
-  box.innerHTML =
-    categories.map(category => `
-
-      <div class="admin-card">
-
-        <strong>
-          ${escapeHtml(category.name)}
-        </strong>
-
-        <div class="admin-actions">
-
-          <button
-            class="btn danger small"
-            onclick="deleteCategory(${Number(category.id)})">
-            حذف
-          </button>
-
-        </div>
-
-      </div>
-
-    `).join("");
-}
-
-async function addCategory(){
-
-  const name =
-    ($("categoryName")?.value || "").trim();
-
-  if(!name){
-
-    alert("أدخل اسم التصنيف.");
-    return;
-  }
-
-  try{
-
-    const {error} =
-      await sb
-      .from("categories")
-      .insert({
-        name
-      });
-
-    if(error) throw error;
-
-    $("categoryName").value = "";
-
-    await loadAdminCategories();
-
-    alert("تمت إضافة التصنيف.");
-
-  }catch(error){
-
-    console.error(error);
-    alert(error.message || "تعذر إضافة التصنيف.");
-  }
-}
-
-async function deleteCategory(id){
-
-  if(!confirm("هل تريد حذف التصنيف؟")){
-    return;
-  }
-
-  try{
-
-    const {error} =
-      await sb
-      .from("categories")
-      .delete()
-      .eq("id",id);
-
-    if(error) throw error;
-
-    await loadAdminCategories();
-
-  }catch(error){
-
-    console.error(error);
-    alert(
-      "تعذر حذف التصنيف. قد تكون هناك منتجات مرتبطة به."
-    );
-  }
-}
-
-/* =========================================================
-   ADMIN ORDERS
-========================================================= */
-
-const statusLabels = {
-  new:"جديد",
-  processing:"قيد المعالجة",
-  shipped:"تم الشحن",
-  delivered:"تم التسليم",
-  cancelled:"ملغى"
-};
-
-async function loadAdminOrders(){
-
-  if(!sb) return;
-
-  try{
-
-    const {data,error} =
-      await sb
-      .from("orders")
-      .select("*")
-      .order("created_at",{ascending:false});
-
-    if(error) throw error;
-
-    renderAdminOrders(data || []);
-
-  }catch(error){
-
-    console.error(error);
-  }
-}
-
-function renderAdminOrders(list){
-
-  const box =
-    $("adminOrdersList");
-
-  if(!box) return;
-
-  if(!list.length){
-
-    box.innerHTML =
-      '<div class="empty">لا توجد طلبات.</div>';
-
-    return;
-  }
-
-  box.innerHTML =
-    list.map(order => `
-
-      <div class="admin-card">
-
-        <h4>
-          ${escapeHtml(
-            order.order_number ||
-            ("طلب #" + order.id)
-          )}
-        </h4>
-
-        <div>
-          <strong>
-            ${escapeHtml(order.customer_name || "")}
-          </strong>
-        </div>
-
-        <div style="color:#aaa">
-          الهاتف:
-          ${escapeHtml(order.phone || "")}
-        </div>
-
-        <div style="color:#aaa">
-          ${escapeHtml(order.wilaya || "")}
-          -
-          ${escapeHtml(order.commune || "")}
-        </div>
-
-        <div style="color:#aaa">
-          ${escapeHtml(order.address || "")}
-        </div>
-
-        <div style="color:#ff9a22;font-size:18px;margin-top:7px">
-          ${money(order.total)}
-        </div>
-
-        <div class="admin-actions">
-
-          <select
-            class="order-status"
-            onchange="updateOrderStatus(${Number(order.id)},this.value)">
-
-            ${Object.keys(statusLabels).map(status => `
-
-              <option
-                value="${status}"
-                ${order.status === status ? "selected" : ""}>
-                ${statusLabels[status]}
-              </option>
-
-            `).join("")}
-
-          </select>
-
-          <button
-            class="btn secondary small"
-            onclick="showInvoice(${Number(order.id)})">
-            الفاتورة
-          </button>
-
-          ${
-            order.status === "new"
-            ? `
-              <button
-                class="btn small"
-                onclick="confirmOrder(${Number(order.id)})">
-                تأكيد الطلب
-              </button>
-            `
-            : ""
-          }
-
-        </div>
-
-      </div>
-
-    `).join("");
-}
-
-async function confirmOrder(id){
-
-  await updateOrderStatus(
-    id,
-    "processing"
-  );
-}
-
-async function updateOrderStatus(id,status){
-
-  try{
-
-    const {error} =
-      await sb
-      .from("orders")
-      .update({
-        status,
-        updated_at:new Date().toISOString()
-      })
-      .eq("id",id);
-
-    if(error) throw error;
-
-    await loadAdminOrders();
-    await loadAdminDashboard();
-
-  }catch(error){
-
-    console.error(error);
-
-    alert(
-      error.message ||
-      "تعذر تحديث حالة الطلب."
-    );
-  }
-}
-
-/* =========================================================
-   INVOICE
-========================================================= */
-
-async function showInvoice(orderId){
-
-  try{
-
-    const {data:order,error} =
-      await sb
-      .from("orders")
-      .select("*")
-      .eq("id",orderId)
-      .single();
-
-    if(error) throw error;
-
-    const {data:items,error:itemsError} =
-      await sb
-      .from("order_items")
-      .select("*")
-      .eq("order_id",orderId);
-
-    if(itemsError) throw itemsError;
-
-    currentAdminOrder = order;
-
-    const box =
-      $("invoiceContent");
-
-    box.innerHTML = `
-
-      <div id="printArea">
-
-        <h2 style="text-align:center">
-          TijaraPro
-        </h2>
-
-        <p style="text-align:center;color:#aaa">
-          فاتورة الطلب
-        </p>
-
-        <hr style="border-color:#333">
-
-        <p>
-          <strong>رقم الطلب:</strong>
-          ${escapeHtml(order.order_number || order.id)}
-        </p>
-
-        <p>
-          <strong>الزبون:</strong>
-          ${escapeHtml(order.customer_name || "")}
-        </p>
-
-        <p>
-          <strong>الهاتف:</strong>
-          ${escapeHtml(order.phone || "")}
-        </p>
-
-        <p>
-          <strong>العنوان:</strong>
-          ${escapeHtml(order.wilaya || "")}
-          -
-          ${escapeHtml(order.commune || "")}
-          -
-          ${escapeHtml(order.address || "")}
-        </p>
-
-        <hr style="border-color:#333">
-
-        ${
-          (items || []).map(item => `
-
-            <div style="
-              display:flex;
-              justify-content:space-between;
-              padding:7px 0;
-              border-bottom:1px solid #333">
-
-              <span>
-                ${escapeHtml(
-                  item.product_name ||
-                  item.name ||
-                  "منتج"
-                )}
-                ×
-                ${Number(item.quantity || 1)}
-              </span>
-
-              <strong>
-                ${money(
-                  item.total ||
-                  item.price ||
-                  0
-                )}
-              </strong>
-
-            </div>
-
-          `).join("")
-        }
-
-        <div style="margin-top:15px;font-size:19px;font-weight:bold">
-          الإجمالي:
-          ${money(order.total)}
-        </div>
-
-        <p style="color:#aaa">
-          الحالة:
-          ${statusLabels[order.status] || order.status}
-        </p>
-
-      </div>
-    `;
-
-    openModal("invoiceModal");
-
-  }catch(error){
-
-    console.error(error);
-
-    alert(
-      error.message ||
-      "تعذر تحميل الفاتورة."
-    );
-  }
-}
-
-function printInvoice(){
-
-  const area =
-    $("printArea");
-
-  if(!area) return;
-
-  const win =
-    window.open(
-      "",
-      "_blank",
-      "width=800,height=800"
-    );
-
-  if(!win){
-
-    alert(
-      "المتصفح منع نافذة الطباعة. اسمح بفتح النوافذ."
+    showMessage(
+      authMessage,
+      "أدخل البريد الإلكتروني وكلمة المرور."
     );
 
     return;
   }
 
-  win.document.write(`
-    <!DOCTYPE html>
-    <html dir="rtl">
-    <head>
-      <meta charset="UTF-8">
-      <title>فاتورة TijaraPro</title>
-      <style>
-        body{
-          font-family:Arial;
-          padding:25px;
-          color:#111;
-        }
-        hr{
-          border:0;
-          border-top:1px solid #ddd;
-        }
-      </style>
-    </head>
-    <body>
-      ${area.innerHTML}
-    </body>
-    </html>
-  `);
+  if(password.length < 6){
 
-  win.document.close();
-  win.focus();
-
-  setTimeout(() => {
-    win.print();
-    win.close();
-  },300);
-}
-
-/* =========================================================
-   CUSTOMERS
-========================================================= */
-
-async function loadAdminCustomers(){
-
-  if(!sb) return;
-
-  try{
-
-    const {data,error} =
-      await sb
-      .from("customers")
-      .select("*")
-      .order("id",{ascending:false});
-
-    if(error) throw error;
-
-    renderAdminCustomers(data || []);
-
-  }catch(error){
-
-    console.error(error);
-  }
-}
-
-function renderAdminCustomers(list){
-
-  const box =
-    $("adminCustomersList");
-
-  if(!box) return;
-
-  if(!list.length){
-
-    box.innerHTML =
-      '<div class="empty">لا توجد بيانات زبائن.</div>';
-
-    return;
-  }
-
-  box.innerHTML =
-    list.map(customer => `
-
-      <div class="admin-card">
-
-        <h4>
-          ${escapeHtml(
-            customer.name ||
-            customer.customer_name ||
-            "زبون"
-          )}
-        </h4>
-
-        <div style="color:#aaa">
-          ${escapeHtml(
-            customer.phone || ""
-          )}
-        </div>
-
-      </div>
-
-    `).join("");
-}
-
-/* =========================================================
-   DELIVERY
-========================================================= */
-
-async function loadAdminDelivery(){
-
-  if(!sb) return;
-
-  try{
-
-    const {data,error} =
-      await sb
-      .from("delivery_zones")
-      .select("*")
-      .order("wilaya");
-
-    if(error) throw error;
-
-    renderAdminDelivery(data || []);
-
-  }catch(error){
-
-    console.error(error);
-  }
-}
-
-function renderAdminDelivery(list){
-
-  const box =
-    $("adminDeliveryList");
-
-  if(!box) return;
-
-  if(!list.length){
-
-    box.innerHTML =
-      '<div class="empty">لا توجد مناطق توصيل.</div>';
-
-    return;
-  }
-
-  box.innerHTML =
-    list.map(zone => `
-
-      <div class="admin-card">
-
-        <h4>
-          ${escapeHtml(
-            zone.wilaya ||
-            zone.name ||
-            ""
-          )}
-        </h4>
-
-        <div>
-          السعر:
-          <strong style="color:#ff9a22">
-            ${money(zone.fee || 0)}
-          </strong>
-        </div>
-
-        <div style="color:#aaa">
-          المدة:
-          ${escapeHtml(zone.duration || "")}
-        </div>
-
-        <div class="admin-actions">
-
-          <button
-            class="btn danger small"
-            onclick="deleteDelivery(${Number(zone.id)})">
-            حذف
-          </button>
-
-        </div>
-
-      </div>
-
-    `).join("");
-}
-
-async function addDelivery(){
-
-  const wilaya =
-    ($("dWilaya")?.value || "").trim();
-
-  const fee =
-    Number($("dFee")?.value || 0);
-
-  const duration =
-    ($("dDuration")?.value || "").trim();
-
-  if(!wilaya){
-
-    alert("أدخل الولاية.");
-    return;
-  }
-
-  try{
-
-    const {error} =
-      await sb
-      .from("delivery_zones")
-      .insert({
-        wilaya,
-        fee,
-        duration,
-        active:true
-      });
-
-    if(error) throw error;
-
-    $("dWilaya").value = "";
-    $("dFee").value = "0";
-    $("dDuration").value = "";
-
-    await loadAdminDelivery();
-
-    alert("تمت إضافة منطقة التوصيل.");
-
-  }catch(error){
-
-    console.error(error);
-
-    alert(
-      error.message ||
-      "تعذر إضافة منطقة التوصيل."
+    showMessage(
+      authMessage,
+      "كلمة المرور يجب أن تكون 6 أحرف على الأقل."
     );
-  }
-}
 
-async function deleteDelivery(id){
-
-  if(!confirm("هل تريد حذف منطقة التوصيل؟")){
     return;
   }
 
-  try{
 
-    const {error} =
-      await sb
-      .from("delivery_zones")
-      .delete()
-      .eq("id",id);
+  authButton.disabled = true;
+  authButton.textContent = "جارٍ المعالجة...";
 
-    if(error) throw error;
-
-    await loadAdminDelivery();
-
-  }catch(error){
-
-    console.error(error);
-
-    alert(
-      error.message ||
-      "تعذر حذف منطقة التوصيل."
-    );
-  }
-}
-
-/* =========================================================
-   SETTINGS
-========================================================= */
-
-async function saveSettings(){
-
-  if(!sb) return;
-
-  const name =
-    ($("storeName")?.value || "").trim();
-
-  const description =
-    ($("storeDesc")?.value || "").trim();
-
-  const phone =
-    ($("storePhone")?.value || "").trim();
-
-  const whatsapp =
-    ($("storeWhatsapp")?.value || "").trim();
-
-  const logo =
-    ($("storeLogo")?.value || "").trim();
-
-  const delivery =
-    ($("storeDelivery")?.value || "").trim();
-
-  const returnPolicy =
-    ($("storeReturn")?.value || "").trim();
 
   try{
 
-    const {data:existing} =
-      await sb
-      .from("store_settings")
-      .select("id")
-      .limit(1)
-      .maybeSingle();
+    if(loginMode){
 
-    const payload = {
-      name,
-      description,
-      phone,
-      whatsapp,
-      logo,
-      delivery_info:delivery,
-      return_policy:returnPolicy
-    };
+      const {error} =
+        await supabaseClient.auth.signInWithPassword({
+          email:email,
+          password:password
+        });
 
-    let result;
+      if(error) throw error;
 
-    if(existing?.id){
-
-      result =
-        await sb
-        .from("store_settings")
-        .update(payload)
-        .eq("id",existing.id);
+      await loadUser();
 
     }else{
 
-      result =
-        await sb
-        .from("store_settings")
-        .insert(payload);
-    }
+      const {data,error} =
+        await supabaseClient.auth.signUp({
+          email:email,
+          password:password
+        });
 
-    if(result.error) throw result.error;
+      if(error) throw error;
 
-    await loadStoreSettings();
 
-    alert("تم حفظ الإعدادات.");
+      if(data.session){
 
-  }catch(error){
+        await loadUser();
 
-    console.error(error);
+      }else{
 
-    alert(
-      error.message ||
-      "تعذر حفظ الإعدادات."
-    );
-  }
-}
+        showMessage(
+          authMessage,
+          "تم إنشاء الحساب. إذا طُلب منك تأكيد البريد، افتح رسالة Supabase ثم سجّل الدخول."
+        );
 
-/* =========================================================
-   NEW ORDER CHECK
-========================================================= */
+        loginMode = true;
 
-let lastNewOrdersCount = 0;
+        authTitle.textContent =
+          "تسجيل الدخول";
 
-async function checkNewOrders(){
+        authButton.textContent =
+          "دخول";
 
-  if(!sb) return;
+        switchButton.textContent =
+          "ليس لدي حساب";
 
-  try{
-
-    const {count,error} =
-      await sb
-      .from("orders")
-      .select("id",{
-        count:"exact",
-        head:true
-      })
-      .eq("status","new");
-
-    if(error) return;
-
-    const current =
-      Number(count || 0);
-
-    if(
-      lastNewOrdersCount !== 0 &&
-      current > lastNewOrdersCount
-    ){
-
-      const alertBox =
-        $("newOrderAlert");
-
-      if(alertBox){
-
-        alertBox.classList.add("show");
-
-        setTimeout(() => {
-          alertBox.classList.remove("show");
-        },5000);
       }
-    }
 
-    lastNewOrdersCount = current;
+    }
 
   }catch(error){
 
-    console.error(error);
+    showMessage(
+      authMessage,
+      translateError(error.message)
+    );
+
   }
+
+
+  authButton.disabled = false;
+
+  authButton.textContent =
+    loginMode ? "دخول" : "إنشاء الحساب";
 }
 
-/* =========================================================
-   START
-========================================================= */
 
-async function startApp(){
+/* =========================
+   LOAD USER
+========================= */
 
-  const connected =
-    initSupabase();
+async function loadUser(){
 
-  loadCart();
+  const {
+    data:{
+      user
+    }
+  } =
+  await supabaseClient.auth.getUser();
 
-  if(!connected){
+
+  if(!user){
+
+    showScreen("auth");
+
     return;
   }
 
-  await Promise.all([
-    loadStoreSettings(),
-    loadCategories(),
-    loadProducts(),
-    loadAlgeriaLocations()
-  ]);
 
-  setInterval(
-    checkNewOrders,
-    10000
-  );
+  const {
+    data:stores,
+    error
+  } =
+  await supabaseClient
+    .from("stores")
+    .select("*")
+    .eq("owner_id",user.id)
+    .limit(1);
+
+
+  if(error){
+
+    console.error(error);
+
+    showMessage(
+      authMessage,
+      "حدث خطأ أثناء قراءة المتجر."
+    );
+
+    showScreen("auth");
+
+    return;
+  }
+
+
+  if(stores && stores.length > 0){
+
+    showDashboard(stores[0]);
+
+  }else{
+
+    showScreen("store");
+
+  }
+
 }
 
-/* =========================================================
-   GLOBAL ERROR PROTECTION
-========================================================= */
 
-window.addEventListener("error",function(event){
+/* =========================
+   CREATE STORE
+========================= */
 
-  console.error(
-    "TijaraPro error:",
-    event.error || event.message
-  );
+async function createStore(){
 
-});
+  hideMessage(storeMessage);
 
-window.addEventListener(
-  "unhandledrejection",
-  function(event){
+  const name =
+    document.getElementById("storeName")
+      .value.trim();
 
-    console.error(
-      "TijaraPro promise error:",
-      event.reason
+  const slug =
+    document.getElementById("storeSlug")
+      .value.trim()
+      .toLowerCase()
+      .replace(/\s+/g,"-");
+
+  const phone =
+    document.getElementById("storePhone")
+      .value.trim();
+
+  const wilaya =
+    document.getElementById("storeWilaya")
+      .value.trim();
+
+
+  if(!name || !slug){
+
+    showMessage(
+      storeMessage,
+      "أدخل اسم المتجر والرابط."
     );
+
+    return;
+  }
+
+
+  if(!/^[a-z0-9-]+$/.test(slug)){
+
+    showMessage(
+      storeMessage,
+      "الرابط يجب أن يحتوي على أحرف إنجليزية وأرقام وشرطة فقط."
+    );
+
+    return;
+  }
+
+
+  const {
+    data:{
+      user
+    }
+  } =
+  await supabaseClient.auth.getUser();
+
+
+  if(!user){
+
+    showMessage(
+      storeMessage,
+      "انتهت الجلسة. سجّل الدخول من جديد."
+    );
+
+    showScreen("auth");
+
+    return;
+  }
+
+
+  const {
+    data,
+    error
+  } =
+  await supabaseClient
+    .from("stores")
+    .insert({
+      owner_id:user.id,
+      name:name,
+      slug:slug,
+      phone:phone,
+      wilaya:wilaya
+    })
+    .select()
+    .single();
+
+
+  if(error){
+
+    console.error(error);
+
+    if(error.code === "23505"){
+
+      showMessage(
+        storeMessage,
+        "رابط المتجر مستخدم بالفعل. اختر رابطًا آخر."
+      );
+
+    }else{
+
+      showMessage(
+        storeMessage,
+        "تعذر إنشاء المتجر: " + error.message
+      );
+
+    }
+
+    return;
+  }
+
+
+  showDashboard(data);
+
+}
+
+
+/* =========================
+   DASHBOARD
+========================= */
+
+function showDashboard(store){
+
+  document.getElementById("dashboardName")
+    .textContent = store.name || "-";
+
+  document.getElementById("dashboardSlug")
+    .textContent = store.slug || "-";
+
+  document.getElementById("dashboardPhone")
+    .textContent = store.phone || "-";
+
+  document.getElementById("dashboardWilaya")
+    .textContent = store.wilaya || "-";
+
+  showScreen("dashboard");
+
+}
+
+
+/* =========================
+   SCREEN
+========================= */
+
+function showScreen(screen){
+
+  authScreen.classList.add("hidden");
+  storeScreen.classList.add("hidden");
+  dashboardScreen.classList.add("hidden");
+
+
+  if(screen === "auth")
+    authScreen.classList.remove("hidden");
+
+  if(screen === "store")
+    storeScreen.classList.remove("hidden");
+
+  if(screen === "dashboard")
+    dashboardScreen.classList.remove("hidden");
+
+}
+
+
+/* =========================
+   LOGOUT
+========================= */
+
+async function logout(){
+
+  await supabaseClient.auth.signOut();
+
+  loginMode = true;
+
+  authTitle.textContent =
+    "تسجيل الدخول";
+
+  authButton.textContent =
+    "دخول";
+
+  switchButton.textContent =
+    "ليس لدي حساب";
+
+  showScreen("auth");
+
+}
+
+
+/* =========================
+   ERROR TRANSLATION
+========================= */
+
+function translateError(message){
+
+  if(message.includes("Invalid login credentials"))
+    return "البريد الإلكتروني أو كلمة المرور غير صحيحة.";
+
+  if(message.includes("User already registered"))
+    return "هذا البريد مسجل بالفعل.";
+
+  if(message.includes("Password should be at least"))
+    return "كلمة المرور قصيرة جدًا.";
+
+  if(message.includes("Email not confirmed"))
+    return "يجب تأكيد البريد الإلكتروني أولًا.";
+
+  return message;
+}
+
+
+/* =========================
+   SESSION CHECK
+========================= */
+
+supabaseClient.auth.onAuthStateChange(
+  (event,session)=>{
+
+    if(session){
+
+      loadUser();
+
+    }
 
   }
 );
 
-document.addEventListener(
-  "DOMContentLoaded",
-  startApp
-);
+
+/* =========================
+   START
+========================= */
+
+loadUser();
+
 </script>
 
 </body>
