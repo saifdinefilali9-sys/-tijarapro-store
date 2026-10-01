@@ -18,7 +18,7 @@ body{
  color:#111;
 }
 
-button,input,textarea{font-family:inherit}
+button,input,textarea,select{font-family:inherit}
 button{cursor:pointer}
 .hidden{display:none!important}
 
@@ -69,7 +69,9 @@ button{cursor:pointer}
  margin-bottom:7px;
 }
 
-.field input,.field textarea{
+.field input,
+.field textarea,
+.field select{
  width:100%;
  border:1px solid #ddd;
  border-radius:12px;
@@ -84,7 +86,9 @@ button{cursor:pointer}
  resize:vertical;
 }
 
-.field input:focus,.field textarea:focus{
+.field input:focus,
+.field textarea:focus,
+.field select:focus{
  border-color:#ff8a00;
 }
 
@@ -474,7 +478,8 @@ button{cursor:pointer}
  width:45px;
  height:45px;
  border-radius:13px;
- font-size:20px;
+ font-size:15px;
+ font-weight:bold;
 }
 
 .cart-count{
@@ -618,22 +623,7 @@ button{cursor:pointer}
  background:#ccc;
 }
 
-.public-loading{
- text-align:center;
- padding:50px 10px;
- color:#777;
-}
-
-.public-empty{
- background:#fff;
- border-radius:16px;
- padding:40px 15px;
- text-align:center;
- color:#777;
- grid-column:1/-1;
-}
-
-/* ================= PRODUCT MODAL ================= */
+/* ================= MODALS ================= */
 
 .modal{
  position:fixed;
@@ -832,6 +822,113 @@ button{cursor:pointer}
  color:#fff;
  font-weight:bold;
  font-size:16px;
+}
+
+/* ================= CHECKOUT ================= */
+
+.checkout-summary{
+ background:#f7f7f7;
+ border-radius:13px;
+ padding:14px;
+ margin-bottom:18px;
+}
+
+.checkout-summary-row{
+ display:flex;
+ justify-content:space-between;
+ gap:10px;
+ padding:6px 0;
+}
+
+.checkout-summary-row.total{
+ border-top:1px solid #ddd;
+ margin-top:7px;
+ padding-top:12px;
+ font-size:18px;
+ font-weight:900;
+}
+
+.payment-box{
+ background:#fff8ef;
+ border:1px solid #ffd39d;
+ border-radius:12px;
+ padding:13px;
+ margin-bottom:15px;
+}
+
+.payment-title{
+ font-weight:bold;
+ margin-bottom:5px;
+}
+
+.payment-text{
+ color:#777;
+ font-size:13px;
+}
+
+.submit-order{
+ width:100%;
+ border:0;
+ border-radius:12px;
+ padding:15px;
+ background:#ff8a00;
+ color:#fff;
+ font-size:16px;
+ font-weight:bold;
+}
+
+.submit-order:disabled{
+ opacity:.6;
+ cursor:not-allowed;
+}
+
+/* ================= SUCCESS ================= */
+
+.success-box{
+ text-align:center;
+ padding:30px 10px 15px;
+}
+
+.success-icon{
+ width:70px;
+ height:70px;
+ border-radius:50%;
+ background:#e8f8ed;
+ color:#16803c;
+ display:flex;
+ align-items:center;
+ justify-content:center;
+ margin:0 auto 18px;
+ font-size:35px;
+ font-weight:bold;
+}
+
+.success-box h2{
+ margin:0 0 10px;
+}
+
+.success-box p{
+ color:#777;
+ line-height:1.8;
+}
+
+.order-number{
+ background:#f7f7f7;
+ border-radius:12px;
+ padding:14px;
+ font-weight:bold;
+ margin:15px 0;
+}
+
+.close-success{
+ width:100%;
+ border:0;
+ border-radius:12px;
+ padding:14px;
+ background:#111;
+ color:#fff;
+ font-size:16px;
+ font-weight:bold;
 }
 
 /* ================= ERROR STORE ================= */
@@ -1035,9 +1132,7 @@ TIJARA<span>PRO</span>
 جاري التحميل...
 </div>
 
-<button
-class="open-store-btn"
-onclick="openMyStore()">
+<button class="open-store-btn" onclick="openMyStore()">
 فتح واجهة المتجر
 </button>
 
@@ -1106,7 +1201,6 @@ onclick="openMyStore()">
 <input id="productStock" type="number" min="0" step="1" placeholder="10">
 </div>
 
-
 <div class="field">
 
 <label>صور المنتج</label>
@@ -1128,10 +1222,7 @@ onchange="previewImages(event)"
 
 </div>
 
-
-<button
-class="btn btn-primary"
-onclick="addProduct()">
+<button class="btn btn-primary" onclick="addProduct()">
 حفظ المنتج
 </button>
 
@@ -1170,12 +1261,9 @@ onclick="toggleProductForm()">
 TIJARA<span>PRO</span>
 </div>
 
-<button class="cart-button" onclick="openCart">
-
-<span id="cartCount" class="cart-count">
-0
-</span>
-
+<button class="cart-button" onclick="openCart()">
+السلة
+<span id="cartCount" class="cart-count">0</span>
 </button>
 
 </div>
@@ -1318,10 +1406,144 @@ onclick="addModalProduct()">
 
 </div>
 
-<button
-class="checkout-btn"
-onclick="startCheckout()">
+<button class="checkout-btn" onclick="startCheckout()">
 متابعة الطلب
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- ================= CHECKOUT MODAL ================= -->
+
+<div id="checkoutModal" class="modal">
+
+<div class="modal-box">
+
+<button class="close-modal" onclick="closeCheckout()">
+×
+</button>
+
+<h2 style="margin-top:5px">
+بيانات الطلب
+</h2>
+
+<p style="color:#777;line-height:1.7;margin-top:5px">
+أدخل معلوماتك لإرسال الطلب إلى المتجر.
+</p>
+
+<div id="checkoutMessage" class="message"></div>
+
+<div class="checkout-summary">
+
+<div class="checkout-summary-row">
+<span>المنتجات</span>
+<strong id="checkoutSubtotal">0 دج</strong>
+</div>
+
+<div class="checkout-summary-row">
+<span>التوصيل</span>
+<strong id="checkoutDelivery">0 دج</strong>
+</div>
+
+<div class="checkout-summary-row total">
+<span>الإجمالي</span>
+<strong id="checkoutTotal">0 دج</strong>
+</div>
+
+</div>
+
+<div class="field">
+<label>الاسم الكامل *</label>
+<input id="checkoutName" type="text" placeholder="أدخل اسمك الكامل">
+</div>
+
+<div class="field">
+<label>رقم الهاتف *</label>
+<input id="checkoutPhone" type="tel" placeholder="05 أو 06 أو 07">
+</div>
+
+<div class="field">
+<label>الولاية *</label>
+<input id="checkoutWilaya" type="text" placeholder="مثال: الشلف">
+</div>
+
+<div class="field">
+<label>البلدية *</label>
+<input id="checkoutCommune" type="text" placeholder="أدخل البلدية">
+</div>
+
+<div class="field">
+<label>العنوان *</label>
+<textarea id="checkoutAddress" placeholder="الحي، الشارع، رقم المنزل..."></textarea>
+</div>
+
+<div class="field">
+<label>ملاحظات</label>
+<textarea id="checkoutNotes" placeholder="أي ملاحظة إضافية للطلب"></textarea>
+</div>
+
+<div class="field">
+<label>طريقة الدفع</label>
+<select id="checkoutPayment">
+<option value="cod">الدفع عند الاستلام</option>
+</select>
+</div>
+
+<div class="payment-box">
+
+<div class="payment-title">
+الدفع عند الاستلام
+</div>
+
+<div class="payment-text">
+ستدفع قيمة الطلب عند استلامه.
+</div>
+
+</div>
+
+<button
+id="submitOrderButton"
+class="submit-order"
+onclick="submitOrder()">
+تأكيد وإرسال الطلب
+</button>
+
+</div>
+
+</div>
+
+
+<!-- ================= ORDER SUCCESS ================= -->
+
+<div id="successModal" class="modal">
+
+<div class="modal-box">
+
+<div class="success-box">
+
+<div class="success-icon">
+✓
+</div>
+
+<h2>
+تم إرسال طلبك بنجاح
+</h2>
+
+<p>
+شكرًا لك. تم تسجيل طلبك لدى المتجر وسيتم التواصل معك لتأكيده.
+</p>
+
+<div class="order-number">
+رقم الطلب:
+<span id="successOrderNumber"></span>
+</div>
+
+<button class="close-success" onclick="closeSuccess()">
+العودة إلى المتجر
 </button>
 
 </div>
@@ -2110,31 +2332,8 @@ document.createElement("div");
 
 card.className="product-card";
 
-let images=[];
-
-if(Array.isArray(product.images)){
-
-images=product.images;
-
-}else if(product.images){
-
-try{
-
-images=JSON.parse(product.images);
-
-}catch(e){
-
-images=[];
-
-}
-
-}
-
-if(images.length===0&&product.image_url){
-
-images=[product.image_url];
-
-}
+const images=
+getProductImages(product);
 
 let mainImage="";
 
@@ -2938,6 +3137,19 @@ renderCart();
 CHECKOUT
 ========================================================= */
 
+function getCartSubtotal(){
+
+return cart.reduce(
+(sum,item)=>
+sum+
+Number(item.price||0)*
+Number(item.quantity||0),
+0
+);
+
+}
+
+
 function startCheckout(){
 
 if(cart.length===0){
@@ -2947,9 +3159,352 @@ alert("السلة فارغة");
 return;
 }
 
-alert(
-"السلة جاهزة. سنضيف في الخطوة التالية نموذج بيانات الزبون وحفظ الطلب في Supabase."
+const subtotal=
+getCartSubtotal();
+
+const delivery=0;
+
+document.getElementById("checkoutSubtotal")
+.textContent=
+formatPrice(subtotal)+" دج";
+
+document.getElementById("checkoutDelivery")
+.textContent=
+formatPrice(delivery)+" دج";
+
+document.getElementById("checkoutTotal")
+.textContent=
+formatPrice(subtotal+delivery)+" دج";
+
+clearMessage("checkoutMessage");
+
+document.getElementById("submitOrderButton")
+.disabled=false;
+
+document.getElementById("checkoutModal")
+.classList.add("open");
+
+}
+
+
+function closeCheckout(){
+
+document.getElementById("checkoutModal")
+.classList.remove("open");
+
+}
+
+
+function generateOrderNumber(){
+
+const now=
+new Date();
+
+const date=
+now.getFullYear().toString()+
+String(now.getMonth()+1).padStart(2,"0")+
+String(now.getDate()).padStart(2,"0");
+
+const random=
+Math.floor(
+1000+
+Math.random()*9000
 );
+
+return "TP-"+date+"-"+random;
+
+}
+
+
+function clearCheckoutFields(){
+
+document.getElementById("checkoutName").value="";
+document.getElementById("checkoutPhone").value="";
+document.getElementById("checkoutWilaya").value="";
+document.getElementById("checkoutCommune").value="";
+document.getElementById("checkoutAddress").value="";
+document.getElementById("checkoutNotes").value="";
+document.getElementById("checkoutPayment").value="cod";
+
+}
+
+
+async function submitOrder(){
+
+clearMessage("checkoutMessage");
+
+if(!publicStore){
+
+showMessage(
+"checkoutMessage",
+"تعذر تحديد المتجر"
+);
+
+return;
+}
+
+if(cart.length===0){
+
+showMessage(
+"checkoutMessage",
+"السلة فارغة"
+);
+
+return;
+}
+
+const customerName=
+document.getElementById("checkoutName")
+.value.trim();
+
+const phone=
+document.getElementById("checkoutPhone")
+.value.trim();
+
+const wilaya=
+document.getElementById("checkoutWilaya")
+.value.trim();
+
+const commune=
+document.getElementById("checkoutCommune")
+.value.trim();
+
+const address=
+document.getElementById("checkoutAddress")
+.value.trim();
+
+const notes=
+document.getElementById("checkoutNotes")
+.value.trim();
+
+const paymentMethod=
+document.getElementById("checkoutPayment")
+.value;
+
+if(!customerName){
+
+showMessage(
+"checkoutMessage",
+"أدخل الاسم الكامل"
+);
+
+return;
+}
+
+if(!phone){
+
+showMessage(
+"checkoutMessage",
+"أدخل رقم الهاتف"
+);
+
+return;
+}
+
+if(!wilaya){
+
+showMessage(
+"checkoutMessage",
+"أدخل الولاية"
+);
+
+return;
+}
+
+if(!commune){
+
+showMessage(
+"checkoutMessage",
+"أدخل البلدية"
+);
+
+return;
+}
+
+if(!address){
+
+showMessage(
+"checkoutMessage",
+"أدخل العنوان"
+);
+
+return;
+}
+
+const button=
+document.getElementById("submitOrderButton");
+
+button.disabled=true;
+button.textContent="جاري إرسال الطلب...";
+
+try{
+
+/*
+نأخذ المجموع من السلة الحالية.
+ملاحظة: في النسخة الإنتاجية سننقل
+التحقق من الأسعار والمخزون إلى الخادم.
+*/
+
+const subtotal=
+getCartSubtotal();
+
+const deliveryFee=0;
+
+const total=
+subtotal+
+deliveryFee;
+
+const orderNumber=
+generateOrderNumber();
+
+/* ================= CREATE ORDER ================= */
+
+const orderPayload={
+
+order_number:orderNumber,
+
+customer_id:null,
+
+customer_name:customerName,
+
+phone:phone,
+
+wilaya:wilaya,
+
+commune:commune,
+
+address:address,
+
+notes:notes,
+
+subtotal:subtotal,
+
+delivery_fee:deliveryFee,
+
+total:total,
+
+payment_method:paymentMethod,
+
+status:"pending",
+
+store_id:publicStore.id
+
+};
+
+const {
+data:order,
+error:orderError
+}=
+await supabaseClient
+.from("orders")
+.insert(orderPayload)
+.select()
+.single();
+
+if(orderError){
+
+throw new Error(
+"تعذر حفظ الطلب: "+
+orderError.message
+);
+
+}
+
+
+/* ================= CREATE ORDER ITEMS ================= */
+
+const itemsPayload=
+cart.map(item=>({
+
+order_id:order.id,
+
+product_id:item.id,
+
+product_name:item.name,
+
+price:Number(item.price||0),
+
+quantity:Number(item.quantity||0)
+
+}));
+
+const {
+error:itemsError
+}=
+await supabaseClient
+.from("order_items")
+.insert(itemsPayload);
+
+if(itemsError){
+
+/*
+إذا نجح إنشاء الطلب وفشل حفظ المنتجات،
+نحاول حذف الطلب حتى لا يبقى طلب ناقص.
+*/
+
+try{
+
+await supabaseClient
+.from("orders")
+.delete()
+.eq("id",order.id);
+
+}catch(cleanError){
+
+console.log(cleanError);
+
+}
+
+throw new Error(
+"تم إنشاء الطلب لكن تعذر حفظ المنتجات: "+
+itemsError.message
+);
+
+}
+
+
+/* ================= SUCCESS ================= */
+
+localStorage.removeItem(
+cartStorageKey()
+);
+
+cart=[];
+
+updateCartCount();
+
+closeCheckout();
+
+closeCart();
+
+clearCheckoutFields();
+
+document.getElementById("successOrderNumber")
+.textContent=order.order_number;
+
+document.getElementById("successModal")
+.classList.add("open");
+
+
+}catch(error){
+
+showMessage(
+"checkoutMessage",
+error.message||"حدث خطأ أثناء إرسال الطلب"
+);
+
+button.disabled=false;
+button.textContent="تأكيد وإرسال الطلب";
+
+}
+
+}
+
+
+function closeSuccess(){
+
+document.getElementById("successModal")
+.classList.remove("open");
 
 }
 
