@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
-<meta name="theme-color" content="#111111">
+<meta name="theme-color" content="#111">
 <title>TijaraPro</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -63,8 +63,7 @@ button{cursor:pointer}
  margin-bottom:7px;
 }
 
-.field input,
-.field textarea{
+.field input,.field textarea{
  width:100%;
  border:1px solid #ddd;
  border-radius:12px;
@@ -79,8 +78,7 @@ button{cursor:pointer}
  resize:vertical;
 }
 
-.field input:focus,
-.field textarea:focus{
+.field input:focus,.field textarea:focus{
  border-color:#ff8a00;
 }
 
@@ -275,16 +273,8 @@ button{cursor:pointer}
  margin-bottom:18px;
 }
 
-.product-form.open{display:block}
-
-.image-preview{
- width:100%;
- height:180px;
- object-fit:cover;
- border-radius:12px;
- margin-top:10px;
- display:none;
- background:#eee;
+.product-form.open{
+ display:block;
 }
 
 .file-input{
@@ -293,6 +283,38 @@ button{cursor:pointer}
  border:1px dashed #bbb;
  border-radius:12px;
  background:#fff;
+}
+
+.selected-images{
+ display:grid;
+ grid-template-columns:repeat(3,1fr);
+ gap:8px;
+ margin-top:10px;
+}
+
+.selected-image{
+ position:relative;
+ height:100px;
+ border-radius:10px;
+ overflow:hidden;
+ background:#eee;
+}
+
+.selected-image img{
+ width:100%;
+ height:100%;
+ object-fit:cover;
+}
+
+.main-badge{
+ position:absolute;
+ bottom:5px;
+ right:5px;
+ background:#ff8a00;
+ color:#fff;
+ font-size:10px;
+ padding:4px 6px;
+ border-radius:6px;
 }
 
 .product-grid{
@@ -308,9 +330,9 @@ button{cursor:pointer}
  background:#fff;
 }
 
-.product-image{
+.product-main-image{
  width:100%;
- height:150px;
+ height:170px;
  object-fit:cover;
  background:#eee;
  display:block;
@@ -318,7 +340,7 @@ button{cursor:pointer}
 
 .no-image{
  width:100%;
- height:150px;
+ height:170px;
  display:flex;
  align-items:center;
  justify-content:center;
@@ -326,7 +348,9 @@ button{cursor:pointer}
  color:#999;
 }
 
-.product-info{padding:12px}
+.product-info{
+ padding:12px;
+}
 
 .product-name{
  font-weight:bold;
@@ -347,6 +371,22 @@ button{cursor:pointer}
  margin-bottom:10px;
 }
 
+.product-thumbs{
+ display:flex;
+ gap:5px;
+ overflow-x:auto;
+ padding:8px 12px 0;
+}
+
+.product-thumb{
+ width:45px;
+ height:45px;
+ flex:0 0 45px;
+ object-fit:cover;
+ border-radius:7px;
+ border:1px solid #ddd;
+}
+
 .delete-product{
  width:100%;
  border:0;
@@ -355,6 +395,7 @@ button{cursor:pointer}
  border-radius:9px;
  padding:9px;
  font-weight:bold;
+ margin-top:8px;
 }
 
 .empty{
@@ -370,8 +411,13 @@ button{cursor:pointer}
 }
 
 @media(min-width:700px){
- .stats{grid-template-columns:repeat(4,1fr)}
- .product-grid{grid-template-columns:repeat(4,1fr)}
+ .stats{
+  grid-template-columns:repeat(4,1fr);
+ }
+
+ .product-grid{
+  grid-template-columns:repeat(4,1fr);
+ }
 }
 </style>
 </head>
@@ -379,6 +425,8 @@ button{cursor:pointer}
 <body>
 
 <div class="app">
+
+<!-- AUTH -->
 
 <section id="authPage" class="auth-page">
 
@@ -417,6 +465,7 @@ TIJARA<span>PRO</span>
 
 </div>
 
+
 <div id="registerForm" class="hidden">
 
 <div class="field">
@@ -441,8 +490,11 @@ TIJARA<span>PRO</span>
 </div>
 
 </div>
+
 </section>
 
+
+<!-- CREATE STORE -->
 
 <section id="createStorePage" class="create-page hidden">
 
@@ -485,8 +537,11 @@ TIJARA<span>PRO</span>
 </button>
 
 </div>
+
 </section>
 
+
+<!-- DASHBOARD -->
 
 <section id="dashboardPage" class="dashboard hidden">
 
@@ -503,6 +558,7 @@ TIJARA<span>PRO</span>
 </button>
 
 </div>
+
 </header>
 
 
@@ -583,23 +639,25 @@ TIJARA<span>PRO</span>
 <input id="productStock" type="number" min="0" step="1" placeholder="10">
 </div>
 
+
 <div class="field">
 
-<label>صورة المنتج</label>
+<label>صور المنتج</label>
+
+<p style="font-size:13px;color:#777;margin:5px 0 10px">
+يمكنك اختيار عدة صور من الآيفون. الصورة الأولى ستكون الصورة الرئيسية.
+</p>
 
 <input
-id="productImageFile"
+id="productImageFiles"
 class="file-input"
 type="file"
 accept="image/*"
-onchange="previewImage(event)"
+multiple
+onchange="previewImages(event)"
 >
 
-<img
-id="imagePreview"
-class="image-preview"
-alt="معاينة الصورة"
->
+<div id="selectedImages" class="selected-images"></div>
 
 </div>
 
@@ -609,8 +667,6 @@ class="btn btn-primary"
 onclick="addProduct()">
 حفظ المنتج
 </button>
-
-<br>
 
 <button
 class="btn btn-dark"
@@ -651,8 +707,8 @@ SUPABASE_URL,
 SUPABASE_KEY
 );
 
-let currentUser = null;
-let currentStore = null;
+let currentUser=null;
+let currentStore=null;
 
 
 function showPage(page){
@@ -988,39 +1044,63 @@ form.classList.toggle("open");
 }
 
 
-function previewImage(event){
+function previewImages(event){
 
-const file=event.target.files[0];
+const files=
+Array.from(event.target.files||[]);
 
-const preview=
-document.getElementById("imagePreview");
+const container=
+document.getElementById("selectedImages");
 
-if(!file){
+container.innerHTML="";
 
-preview.style.display="none";
-preview.src="";
-
+if(files.length===0)
 return;
-}
 
-if(!file.type.startsWith("image/")){
+files.forEach((file,index)=>{
 
-alert("يرجى اختيار صورة فقط");
-
-event.target.value="";
-
+if(!file.type.startsWith("image/"))
 return;
+
+const box=
+document.createElement("div");
+
+box.className="selected-image";
+
+const img=
+document.createElement("img");
+
+img.src=URL.createObjectURL(file);
+
+box.appendChild(img);
+
+if(index===0){
+
+const badge=
+document.createElement("div");
+
+badge.className="main-badge";
+
+badge.textContent="الصورة الرئيسية";
+
+box.appendChild(badge);
+
 }
 
-preview.src=URL.createObjectURL(file);
-preview.style.display="block";
+container.appendChild(box);
+
+});
 
 }
 
 
-async function uploadProductImage(file){
+async function uploadProductImages(files){
 
-if(!file) return "";
+const urls=[];
+
+for(let i=0;i<files.length;i++){
+
+const file=files[i];
 
 const extension=
 file.name.split(".").pop().toLowerCase();
@@ -1033,24 +1113,29 @@ currentStore.id+
 "/"+
 Date.now()+
 "-"+
+i+
+"-"+
 Math.random().toString(36).substring(2,8)+
 "."+
 safeExtension;
+
 
 const {error}=
 await supabaseClient
 .storage
 .from("product-images")
-.upload(fileName,file,{
+.upload(
+fileName,
+file,
+{
 contentType:file.type,
 upsert:false
-});
+}
+);
 
-if(error){
-
+if(error)
 throw error;
 
-}
 
 const {data}=
 supabaseClient
@@ -1058,7 +1143,11 @@ supabaseClient
 .from("product-images")
 .getPublicUrl(fileName);
 
-return data.publicUrl;
+urls.push(data.publicUrl);
+
+}
+
+return urls;
 
 }
 
@@ -1076,6 +1165,7 @@ showMessage(
 
 return;
 }
+
 
 const name=
 document.getElementById("productName")
@@ -1095,9 +1185,12 @@ Number(
 document.getElementById("productStock").value
 );
 
-const file=
-document.getElementById("productImageFile")
-.files[0];
+const files=
+Array.from(
+document.getElementById("productImageFiles")
+.files||[]
+);
+
 
 if(!name){
 
@@ -1129,26 +1222,36 @@ showMessage(
 return;
 }
 
+
 try{
 
-let imageUrl="";
+let imageUrls=[];
 
-if(file){
+
+if(files.length>0){
 
 showMessage(
 "productMessage",
-"جاري رفع الصورة..."
+"جاري رفع "+files.length+" صورة..."
 );
 
-imageUrl=
-await uploadProductImage(file);
+imageUrls=
+await uploadProductImages(files);
 
 }
+
 
 showMessage(
 "productMessage",
 "جاري حفظ المنتج..."
 );
+
+
+const mainImage=
+imageUrls.length>0
+?imageUrls[0]
+:"";
+
 
 const {error}=
 await supabaseClient
@@ -1156,41 +1259,49 @@ await supabaseClient
 .insert({
 
 store_id:currentStore.id,
+
 name:name,
+
 description:description,
+
 price:price,
+
 stock:stock,
-image_url:imageUrl,
+
+image_url:mainImage,
+
+images:imageUrls,
+
 available:true,
+
 featured:false
 
 });
 
-if(error){
 
+if(error)
 throw error;
 
-}
 
 showMessage(
 "productMessage",
-"تم حفظ المنتج والصورة بنجاح",
+"تم حفظ المنتج وجميع صوره بنجاح",
 "success"
 );
+
 
 document.getElementById("productName").value="";
 document.getElementById("productDescription").value="";
 document.getElementById("productPrice").value="";
 document.getElementById("productStock").value="";
-document.getElementById("productImageFile").value="";
+document.getElementById("productImageFiles").value="";
 
-const preview=
-document.getElementById("imagePreview");
+document.getElementById("selectedImages")
+.innerHTML="";
 
-preview.src="";
-preview.style.display="none";
 
 await loadProducts();
+
 
 }catch(error){
 
@@ -1216,6 +1327,7 @@ loading.classList.remove("hidden");
 
 grid.innerHTML="";
 
+
 const {data,error}=
 await supabaseClient
 .from("products")
@@ -1223,7 +1335,9 @@ await supabaseClient
 .eq("store_id",currentStore.id)
 .order("created_at",{ascending:false});
 
+
 loading.classList.add("hidden");
+
 
 if(error){
 
@@ -1235,10 +1349,13 @@ escapeHtml(error.message)+
 return;
 }
 
+
 const products=data||[];
+
 
 document.getElementById("productsCount")
 .textContent=products.length;
+
 
 if(products.length===0){
 
@@ -1251,33 +1368,90 @@ grid.innerHTML=
 return;
 }
 
+
 products.forEach(product=>{
 
-const card=document.createElement("div");
+const card=
+document.createElement("div");
 
 card.className="product-card";
 
-let imageHTML="";
 
-if(product.image_url){
+let images=[];
 
-imageHTML=
-'<img class="product-image" src="'+
-escapeAttribute(product.image_url)+
+
+if(Array.isArray(product.images)){
+
+images=product.images;
+
+}else if(product.images){
+
+try{
+
+images=JSON.parse(product.images);
+
+}catch(e){
+
+images=[];
+
+}
+
+}
+
+
+if(images.length===0&&product.image_url){
+
+images=[product.image_url];
+
+}
+
+
+let mainImage="";
+
+if(images.length>0){
+
+mainImage=
+'<img class="product-main-image" src="'+
+escapeAttribute(images[0])+
 '" alt="'+
 escapeAttribute(product.name)+
 '">';
 
 }else{
 
-imageHTML=
+mainImage=
 '<div class="no-image">بدون صورة</div>';
 
 }
 
+
+let thumbs="";
+
+
+if(images.length>1){
+
+thumbs=
+'<div class="product-thumbs">';
+
+images.forEach(url=>{
+
+thumbs+=
+'<img class="product-thumb" src="'+
+escapeAttribute(url)+
+'" alt="">';
+
+});
+
+thumbs+="</div>";
+
+}
+
+
 card.innerHTML=
 
-imageHTML+
+mainImage+
+
+thumbs+
 
 '<div class="product-info">'+
 
@@ -1303,6 +1477,7 @@ product.id+
 
 '</div>';
 
+
 grid.appendChild(card);
 
 });
@@ -1315,6 +1490,7 @@ async function deleteProduct(id){
 if(!confirm("هل تريد حذف هذا المنتج؟"))
 return;
 
+
 const {error}=
 await supabaseClient
 .from("products")
@@ -1322,12 +1498,17 @@ await supabaseClient
 .eq("id",id)
 .eq("store_id",currentStore.id);
 
+
 if(error){
 
-alert("خطأ Supabase: "+error.message);
+alert(
+"خطأ Supabase: "+
+error.message
+);
 
 return;
 }
+
 
 await loadProducts();
 
