@@ -1,14 +1,19 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+
 <title>TijaraPro - منصة المتاجر</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-*{box-sizing:border-box}
+
+*{
+  box-sizing:border-box;
+}
 
 body{
   margin:0;
@@ -17,7 +22,8 @@ body{
   color:#fff;
 }
 
-button,input{
+button,
+input{
   font:inherit;
 }
 
@@ -85,6 +91,10 @@ button{
   margin-top:8px;
 }
 
+button:disabled{
+  opacity:.6;
+}
+
 .secondary{
   background:#292929;
   color:#fff;
@@ -101,6 +111,8 @@ button{
   background:#292929;
   color:#ddd;
   text-align:center;
+  line-height:1.6;
+  word-break:break-word;
 }
 
 .store-box{
@@ -119,12 +131,24 @@ button{
 .value{
   font-size:17px;
   margin-top:4px;
+  word-break:break-word;
 }
 
 .logout{
   margin-top:20px;
 }
+
+.debug{
+  direction:ltr;
+  text-align:left;
+  font-size:12px;
+  color:#aaa;
+  margin-top:10px;
+  word-break:break-word;
+}
+
 </style>
+
 </head>
 
 <body>
@@ -139,12 +163,18 @@ button{
     أنشئ متجرك الإلكتروني بسهولة
   </div>
 
-  <!-- AUTH -->
+
+  <!-- =========================
+       AUTH SCREEN
+  ========================== -->
+
   <div id="authScreen">
 
     <div class="card">
 
-      <h2 id="authTitle">إنشاء حساب</h2>
+      <h2 id="authTitle">
+        إنشاء حساب
+      </h2>
 
       <input
         id="email"
@@ -160,7 +190,10 @@ button{
         autocomplete="new-password"
       >
 
-      <button id="authButton" onclick="register()">
+      <button
+        id="authButton"
+        onclick="handleAuth()"
+      >
         إنشاء الحساب
       </button>
 
@@ -172,19 +205,30 @@ button{
         لدي حساب بالفعل
       </button>
 
-      <div id="authMessage" class="message hidden"></div>
+      <div
+        id="authMessage"
+        class="message hidden"
+      ></div>
 
     </div>
 
   </div>
 
 
-  <!-- CREATE STORE -->
-  <div id="storeScreen" class="hidden">
+  <!-- =========================
+       CREATE STORE SCREEN
+  ========================== -->
+
+  <div
+    id="storeScreen"
+    class="hidden"
+  >
 
     <div class="card">
 
-      <h2>أنشئ متجرك</h2>
+      <h2>
+        أنشئ متجرك
+      </h2>
 
       <p style="color:#aaa">
         أدخل معلومات متجرك لبدء البيع.
@@ -218,19 +262,30 @@ button{
         إنشاء المتجر
       </button>
 
-      <div id="storeMessage" class="message hidden"></div>
+      <div
+        id="storeMessage"
+        class="message hidden"
+      ></div>
 
     </div>
 
   </div>
 
 
-  <!-- DASHBOARD -->
-  <div id="dashboardScreen" class="hidden">
+  <!-- =========================
+       DASHBOARD
+  ========================== -->
+
+  <div
+    id="dashboardScreen"
+    class="hidden"
+  >
 
     <div class="card">
 
-      <h2>لوحة التحكم</h2>
+      <h2>
+        لوحة التحكم
+      </h2>
 
       <p style="color:#aaa">
         مرحبًا بك في متجرك.
@@ -238,21 +293,59 @@ button{
 
       <div class="store-box">
 
-        <div class="label">اسم المتجر</div>
-        <div class="value" id="dashboardName">-</div>
+        <div class="label">
+          اسم المتجر
+        </div>
 
-        <div class="label">رابط المتجر</div>
-        <div class="value" id="dashboardSlug">-</div>
+        <div
+          class="value"
+          id="dashboardName"
+        >
+          -
+        </div>
 
-        <div class="label">رقم الهاتف</div>
-        <div class="value" id="dashboardPhone">-</div>
 
-        <div class="label">الولاية</div>
-        <div class="value" id="dashboardWilaya">-</div>
+        <div class="label">
+          رابط المتجر
+        </div>
+
+        <div
+          class="value"
+          id="dashboardSlug"
+        >
+          -
+        </div>
+
+
+        <div class="label">
+          رقم الهاتف
+        </div>
+
+        <div
+          class="value"
+          id="dashboardPhone"
+        >
+          -
+        </div>
+
+
+        <div class="label">
+          الولاية
+        </div>
+
+        <div
+          class="value"
+          id="dashboardWilaya"
+        >
+          -
+        </div>
 
       </div>
 
-      <button class="logout" onclick="logout()">
+      <button
+        class="logout"
+        onclick="logout()"
+      >
         تسجيل الخروج
       </button>
 
@@ -265,15 +358,16 @@ button{
 
 <script>
 
-/* =========================
-   SUPABASE
-========================= */
+/* =========================================
+   SUPABASE CONFIG
+========================================= */
 
 const SUPABASE_URL =
 "https://kxpzmuxnibmldsmbztgw.supabase.co";
 
 const SUPABASE_KEY =
 "sb_publishable_NOYkYqk-zaJ2YeegoBqdbw_P6FMde8L";
+
 
 const supabaseClient =
 supabase.createClient(
@@ -282,16 +376,16 @@ supabase.createClient(
 );
 
 
-/* =========================
+/* =========================================
    STATE
-========================= */
+========================================= */
 
 let loginMode = false;
 
 
-/* =========================
+/* =========================================
    ELEMENTS
-========================= */
+========================================= */
 
 const authScreen =
 document.getElementById("authScreen");
@@ -318,26 +412,31 @@ const storeMessage =
 document.getElementById("storeMessage");
 
 
-/* =========================
-   AUTH MODE
-========================= */
+/* =========================================
+   SWITCH LOGIN / REGISTER
+========================================= */
 
 function switchAuth(){
 
   loginMode = !loginMode;
 
+  hideMessage(authMessage);
+
   if(loginMode){
 
-    authTitle.textContent = "تسجيل الدخول";
+    authTitle.textContent =
+      "تسجيل الدخول";
 
-    authButton.textContent = "دخول";
+    authButton.textContent =
+      "دخول";
 
     switchButton.textContent =
       "ليس لدي حساب";
 
   }else{
 
-    authTitle.textContent = "إنشاء حساب";
+    authTitle.textContent =
+      "إنشاء حساب";
 
     authButton.textContent =
       "إنشاء الحساب";
@@ -347,41 +446,50 @@ function switchAuth(){
 
   }
 
-  hideMessage(authMessage);
 }
 
 
-/* =========================
-   MESSAGE
-========================= */
+/* =========================================
+   SHOW MESSAGE
+========================================= */
 
 function showMessage(element,text){
 
   element.textContent = text;
+
   element.classList.remove("hidden");
 
 }
 
+
 function hideMessage(element){
+
+  element.textContent = "";
 
   element.classList.add("hidden");
 
 }
 
 
-/* =========================
-   REGISTER / LOGIN
-========================= */
+/* =========================================
+   AUTH
+========================================= */
 
-async function register(){
+async function handleAuth(){
 
   hideMessage(authMessage);
 
   const email =
-    document.getElementById("email").value.trim();
+    document
+      .getElementById("email")
+      .value
+      .trim();
 
   const password =
-    document.getElementById("password").value;
+    document
+      .getElementById("password")
+      .value;
+
 
   if(!email || !password){
 
@@ -392,6 +500,7 @@ async function register(){
 
     return;
   }
+
 
   if(password.length < 6){
 
@@ -405,35 +514,57 @@ async function register(){
 
 
   authButton.disabled = true;
-  authButton.textContent = "جارٍ المعالجة...";
+
+  authButton.textContent =
+    "جارٍ المعالجة...";
 
 
   try{
 
+    /* LOGIN */
+
     if(loginMode){
 
-      const {error} =
-        await supabaseClient.auth.signInWithPassword({
-          email:email,
-          password:password
-        });
+      const result =
+        await supabaseClient.auth
+          .signInWithPassword({
+            email:email,
+            password:password
+          });
 
-      if(error) throw error;
+
+      if(result.error){
+
+        throw result.error;
+
+      }
+
 
       await loadUser();
 
-    }else{
-
-      const {data,error} =
-        await supabaseClient.auth.signUp({
-          email:email,
-          password:password
-        });
-
-      if(error) throw error;
+    }
 
 
-      if(data.session){
+    /* REGISTER */
+
+    else{
+
+      const result =
+        await supabaseClient.auth
+          .signUp({
+            email:email,
+            password:password
+          });
+
+
+      if(result.error){
+
+        throw result.error;
+
+      }
+
+
+      if(result.data.session){
 
         await loadUser();
 
@@ -441,8 +572,9 @@ async function register(){
 
         showMessage(
           authMessage,
-          "تم إنشاء الحساب. إذا طُلب منك تأكيد البريد، افتح رسالة Supabase ثم سجّل الدخول."
+          "تم إنشاء الحساب. إذا كان تأكيد البريد مفعّلًا، افتح رسالة البريد ثم سجّل الدخول."
         );
+
 
         loginMode = true;
 
@@ -459,11 +591,20 @@ async function register(){
 
     }
 
-  }catch(error){
+  }
+
+  catch(error){
+
+    console.error(
+      "AUTH ERROR:",
+      error
+    );
+
 
     showMessage(
       authMessage,
-      translateError(error.message)
+      "خطأ: " +
+      (error.message || "خطأ غير معروف")
     );
 
   }
@@ -472,106 +613,187 @@ async function register(){
   authButton.disabled = false;
 
   authButton.textContent =
-    loginMode ? "دخول" : "إنشاء الحساب";
+    loginMode
+      ? "دخول"
+      : "إنشاء الحساب";
+
 }
 
 
-/* =========================
-   LOAD USER
-========================= */
+/* =========================================
+   LOAD CURRENT USER
+========================================= */
 
 async function loadUser(){
 
-  const {
-    data:{
-      user
+  hideMessage(authMessage);
+
+
+  try{
+
+    const result =
+      await supabaseClient.auth
+        .getUser();
+
+
+    if(result.error){
+
+      throw result.error;
+
     }
-  } =
-  await supabaseClient.auth.getUser();
 
 
-  if(!user){
+    const user =
+      result.data.user;
 
-    showScreen("auth");
 
-    return;
+    if(!user){
+
+      showScreen("auth");
+
+      return;
+
+    }
+
+
+    console.log(
+      "USER:",
+      user.id
+    );
+
+
+    /* READ STORE */
+
+    const resultStores =
+      await supabaseClient
+        .from("stores")
+        .select("*")
+        .eq("owner_id",user.id)
+        .limit(1);
+
+
+    if(resultStores.error){
+
+      console.error(
+        "STORE READ ERROR:",
+        resultStores.error
+      );
+
+
+      showMessage(
+        authMessage,
+        "خطأ Supabase: " +
+        resultStores.error.message
+      );
+
+
+      showScreen("auth");
+
+      return;
+
+    }
+
+
+    const stores =
+      resultStores.data;
+
+
+    if(stores && stores.length > 0){
+
+      showDashboard(
+        stores[0]
+      );
+
+    }else{
+
+      showScreen("store");
+
+    }
+
   }
 
+  catch(error){
 
-  const {
-    data:stores,
-    error
-  } =
-  await supabaseClient
-    .from("stores")
-    .select("*")
-    .eq("owner_id",user.id)
-    .limit(1);
+    console.error(
+      "LOAD USER ERROR:",
+      error
+    );
 
-
-  if(error){
-
-    console.error(error);
 
     showMessage(
       authMessage,
-      "حدث خطأ أثناء قراءة المتجر."
+      "خطأ Supabase: " +
+      (error.message || "خطأ غير معروف")
     );
 
+
     showScreen("auth");
-
-    return;
-  }
-
-
-  if(stores && stores.length > 0){
-
-    showDashboard(stores[0]);
-
-  }else{
-
-    showScreen("store");
 
   }
 
 }
 
 
-/* =========================
+/* =========================================
    CREATE STORE
-========================= */
+========================================= */
 
 async function createStore(){
 
   hideMessage(storeMessage);
 
+
   const name =
-    document.getElementById("storeName")
-      .value.trim();
+    document
+      .getElementById("storeName")
+      .value
+      .trim();
+
 
   const slug =
-    document.getElementById("storeSlug")
-      .value.trim()
+    document
+      .getElementById("storeSlug")
+      .value
+      .trim()
       .toLowerCase()
       .replace(/\s+/g,"-");
 
+
   const phone =
-    document.getElementById("storePhone")
-      .value.trim();
+    document
+      .getElementById("storePhone")
+      .value
+      .trim();
+
 
   const wilaya =
-    document.getElementById("storeWilaya")
-      .value.trim();
+    document
+      .getElementById("storeWilaya")
+      .value
+      .trim();
 
 
-  if(!name || !slug){
+  if(!name){
 
     showMessage(
       storeMessage,
-      "أدخل اسم المتجر والرابط."
+      "أدخل اسم المتجر."
     );
 
     return;
+
+  }
+
+
+  if(!slug){
+
+    showMessage(
+      storeMessage,
+      "أدخل رابط المتجر."
+    );
+
+    return;
+
   }
 
 
@@ -579,192 +801,239 @@ async function createStore(){
 
     showMessage(
       storeMessage,
-      "الرابط يجب أن يحتوي على أحرف إنجليزية وأرقام وشرطة فقط."
+      "رابط المتجر يجب أن يحتوي على أحرف إنجليزية وأرقام وشرطة فقط."
     );
 
     return;
+
   }
 
 
-  const {
-    data:{
-      user
+  try{
+
+    const userResult =
+      await supabaseClient.auth
+        .getUser();
+
+
+    if(userResult.error){
+
+      throw userResult.error;
+
     }
-  } =
-  await supabaseClient.auth.getUser();
 
 
-  if(!user){
+    const user =
+      userResult.data.user;
+
+
+    if(!user){
+
+      showMessage(
+        storeMessage,
+        "انتهت الجلسة. سجّل الدخول من جديد."
+      );
+
+      showScreen("auth");
+
+      return;
+
+    }
+
+
+    const result =
+      await supabaseClient
+        .from("stores")
+        .insert({
+
+          owner_id:user.id,
+
+          name:name,
+
+          slug:slug,
+
+          phone:phone,
+
+          wilaya:wilaya
+
+        })
+        .select()
+        .single();
+
+
+    if(result.error){
+
+      console.error(
+        "CREATE STORE ERROR:",
+        result.error
+      );
+
+
+      showMessage(
+        storeMessage,
+        "خطأ Supabase: " +
+        result.error.message
+      );
+
+      return;
+
+    }
+
+
+    showDashboard(
+      result.data
+    );
+
+  }
+
+  catch(error){
+
+    console.error(
+      "CREATE STORE ERROR:",
+      error
+    );
+
 
     showMessage(
       storeMessage,
-      "انتهت الجلسة. سجّل الدخول من جديد."
+      "خطأ Supabase: " +
+      (error.message || "خطأ غير معروف")
     );
 
-    showScreen("auth");
-
-    return;
   }
-
-
-  const {
-    data,
-    error
-  } =
-  await supabaseClient
-    .from("stores")
-    .insert({
-      owner_id:user.id,
-      name:name,
-      slug:slug,
-      phone:phone,
-      wilaya:wilaya
-    })
-    .select()
-    .single();
-
-
-  if(error){
-
-    console.error(error);
-
-    if(error.code === "23505"){
-
-      showMessage(
-        storeMessage,
-        "رابط المتجر مستخدم بالفعل. اختر رابطًا آخر."
-      );
-
-    }else{
-
-      showMessage(
-        storeMessage,
-        "تعذر إنشاء المتجر: " + error.message
-      );
-
-    }
-
-    return;
-  }
-
-
-  showDashboard(data);
 
 }
 
 
-/* =========================
+/* =========================================
    DASHBOARD
-========================= */
+========================================= */
 
 function showDashboard(store){
 
-  document.getElementById("dashboardName")
-    .textContent = store.name || "-";
+  document
+    .getElementById("dashboardName")
+    .textContent =
+      store.name || "-";
 
-  document.getElementById("dashboardSlug")
-    .textContent = store.slug || "-";
 
-  document.getElementById("dashboardPhone")
-    .textContent = store.phone || "-";
+  document
+    .getElementById("dashboardSlug")
+    .textContent =
+      store.slug || "-";
 
-  document.getElementById("dashboardWilaya")
-    .textContent = store.wilaya || "-";
+
+  document
+    .getElementById("dashboardPhone")
+    .textContent =
+      store.phone || "-";
+
+
+  document
+    .getElementById("dashboardWilaya")
+    .textContent =
+      store.wilaya || "-";
+
 
   showScreen("dashboard");
 
 }
 
 
-/* =========================
-   SCREEN
-========================= */
+/* =========================================
+   SCREEN SWITCH
+========================================= */
 
 function showScreen(screen){
 
   authScreen.classList.add("hidden");
+
   storeScreen.classList.add("hidden");
+
   dashboardScreen.classList.add("hidden");
 
 
-  if(screen === "auth")
+  if(screen === "auth"){
+
     authScreen.classList.remove("hidden");
 
-  if(screen === "store")
+  }
+
+
+  if(screen === "store"){
+
     storeScreen.classList.remove("hidden");
 
-  if(screen === "dashboard")
+  }
+
+
+  if(screen === "dashboard"){
+
     dashboardScreen.classList.remove("hidden");
+
+  }
 
 }
 
 
-/* =========================
+/* =========================================
    LOGOUT
-========================= */
+========================================= */
 
 async function logout(){
 
   await supabaseClient.auth.signOut();
 
+
   loginMode = true;
+
 
   authTitle.textContent =
     "تسجيل الدخول";
 
+
   authButton.textContent =
     "دخول";
 
+
   switchButton.textContent =
     "ليس لدي حساب";
+
+
+  document
+    .getElementById("email")
+    .value = "";
+
+
+  document
+    .getElementById("password")
+    .value = "";
+
 
   showScreen("auth");
 
 }
 
 
-/* =========================
-   ERROR TRANSLATION
-========================= */
-
-function translateError(message){
-
-  if(message.includes("Invalid login credentials"))
-    return "البريد الإلكتروني أو كلمة المرور غير صحيحة.";
-
-  if(message.includes("User already registered"))
-    return "هذا البريد مسجل بالفعل.";
-
-  if(message.includes("Password should be at least"))
-    return "كلمة المرور قصيرة جدًا.";
-
-  if(message.includes("Email not confirmed"))
-    return "يجب تأكيد البريد الإلكتروني أولًا.";
-
-  return message;
-}
-
-
-/* =========================
-   SESSION CHECK
-========================= */
+/* =========================================
+   AUTH STATE
+========================================= */
 
 supabaseClient.auth.onAuthStateChange(
   (event,session)=>{
 
-    if(session){
-
-      loadUser();
-
-    }
+    console.log(
+      "AUTH EVENT:",
+      event
+    );
 
   }
 );
 
 
-/* =========================
-   START
-========================= */
+/* =========================================
+   START APPLICATION
+========================================= */
 
 loadUser();
 
